@@ -1,0 +1,75 @@
+---
+title: "Figure 1e: SNV analysis results"
+output:
+  html_document:
+    df_print: paged
+---
+
+This script plots Figure 1e: Protein-pump inhibitors (PPIs) are linked to an increase gut abundance of oral bacteria specifically by increasing oral-gut transfer, as revealed through strain-level analysis. 
+
+The cuneiform plot shows the change in bacterial species abundance in the gut in subjects taking PPIs versus not (controlling for other drugs and demographic factors) in each clinical group separately, and for all subjects pooled together. 
+
+Rows marked “SNV” show whether such oral strain markers are significantly (two-sided MWU FDR < 0.1) enriched over gut strain markers in MetaCardis subjects taking PPIs, controlling for abundance of each species. 
+
+Marker direction, color and size  and hue denotes the sign and value of Cliff’s delta standardized effect size, whereas intensity and size denote amplitude of effect size; opaque markers are signifi-cantly altered (two-sided MWU  FDR < 0.1; passing all confounder checks).
+
+Bacteria are shown if their abundance is significantly altered under PPI consumption, and there are SNPs distinguishing oral from gut strains in the HMP. 
+
+Required file in the _input_data_ folder:
+
+- snps_ppi_input.txt
+
+
+Load necessary libraries.
+```{r, warning=FALSE}
+library (ggplot2)
+```
+
+Load data file with SNV analysis results.
+```{r}
+fileFolder = './input_data/'
+data <- read.table (file = paste0(fileFolder, "snps_ppi_input.txt"),
+                    sep = "\t", header = T, check.names = F)
+
+```
+
+Select data to plot: deconfounded features (Status "SD", "LD", "NC") passing the Q-value threshold of 0.1.
+```{r}
+subdata <- data
+subdata$Support <- (subdata$Status %in% c ("SD", "LD", "NC")) | (subdata$Form == "SNV" & subdata$Q < 0.1)
+```
+
+Assemble the cuneiform plot.
+```{r}
+p <- ggplot (subdata, aes (x = Feature, y = paste0 (Test, ": ", Form))) + 
+  theme_bw () + 
+  geom_point (data = subset (subdata, Support == "TRUE"), 
+              aes (fill = D, shape = as.factor (sign (D)), size = abs (D)), 
+              color = "#000000", alpha = 1) + 
+  geom_point (data = subset (subdata, Support == "FALSE"), 
+              aes (fill = D, shape = as.factor (sign (D)), size = abs (D)), 
+              color = "#777777", alpha = 0.5) + 
+  theme (axis.text.x = element_text (angle = -90, hjust = 0, size = 12, face = "italic"),
+         axis.text.y = element_text (size = 12)) + scale_shape_manual (values = c (25, 24)) +
+  scale_fill_gradient2 (mid = "white", high = "blue", low = "red", 
+                        midpoint = 0, guide = guide_colorbar (raster = F)) + 
+  xlab ("") + ylab ("") +
+  ggtitle('Proton pump inhibitors')
+```
+
+Display the plot. 
+```{r, fig.width=12, fig.height=7, warning=FALSE}
+print (p)
+```
+
+Unkomment thi section to print plot to a pdf file. 
+```{r}
+#pdf (file = "fig_1e_snps_ppi.pdf", width = 12, height = 7)
+#print (p)
+#dev.off ()
+```
+
+
+```{r}
+sessionInfo()
+```

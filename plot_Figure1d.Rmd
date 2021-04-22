@@ -1,0 +1,130 @@
+---
+title: "Figure 1d: Aspirin-host-microbiome associations"
+output:
+  html_document:
+    df_print: paged
+---
+
+This script plots Figure 1d: Host-microbiome associations of aspirin.
+
+Scatterplot shows confidently deconfounded associations of aspirin usage in serum metabolome, host phenotype and microbiome features (Cliff’s delta), plotted against the effect size for the comparison between patients and healthy controls separated by clinical group. 
+Thus, quadrants of the graph correspond to whether treatment signature direction is concordant with disease signature (indicating a potential severity marker) or discordant (indicating a possible direct effect of the medication). 
+A subset of features is highlighted for interpretation and plotted as a bar graph.
+
+Required file in the _input_data_ folder:
+
+- Supplementary_Table_6_2019-09-13434.xlsx
+
+
+Load necessary libraries. 
+```{r, warning=FALSE}
+library (ggplot2)
+library (cowplot)
+library (ggrepel)
+library (readxl)
+```
+
+Load input data from Supplementary Table 6. 
+```{r}
+fileFolder = 'C:/Users/mazimmer/Documents/Projects/metaCardis/SupplementaryTables/SupllTablesUpdate20201102/Submission/'
+data <- read_excel(paste0(fileFolder,
+                             "Supplementary_Table_6_2019-09-13434.xlsx"), 
+                      sheet = "Drug group effect")
+#Select only aspirine associations from the full table. 
+data <- data[data$Effector=='Aspirine intake',]
+```
+
+Select a subset of data for plotting. 
+```{r}
+data$Number <- rownames (data)
+
+samedata <- subset (data, Congruence == "Same")
+oppositedata <- subset (data, Congruence == "Opposite")
+
+# do not plot unannotated metabolome features
+subdata <- subset (data, Congruence == "Opposite"  & ! (`Feature space` %in% c ("Serum, unannotated", "Urine, unannotated")))
+
+# filter features by short name (to remove e.g. features measured by multiple methods)
+subdata$Shortened.Name <- sub("\\(.*", "", subdata$`Feature display name`)
+subdata <- subdata [! duplicated (subdata$Shortened.Name, subdata$Effector),]
+
+```
+
+Assemble graph for plotting. 
+```{r}
+p <- ggplot (data, aes (x = `Effect size`, y = `Comparison D`)) + 
+  geom_vline (xintercept = 0) + 
+  geom_hline (yintercept = 0) + 
+  ylab ("Disease effect size (Cliff's delta)") + 
+  xlab ("Drug effect size (Cliff's delta)") + 
+  geom_point (aes (color = as.factor (sign (data$`Effect size`))), size = 5) + 
+  theme (legend.position = "none", 
+         axis.text = element_text (size = 20), 
+         axis.title = element_text (size = 20)) + 
+  scale_color_manual (values = c ("#d73027", "#4575b4")) + 
+  geom_text_repel (data = subdata, aes (label = Number), color = "black", 
+                   size = 3, min.segment.length = 0, force = 3, box.padding = 2,
+                   point.padding = 1, segment.alpha = 0.5,
+                   max.overlaps = 100) + 
+  scale_x_continuous (breaks = c (-1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0)) + 
+  scale_y_continuous (breaks = c (-1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0)) + 
+  coord_cartesian (xlim = c (-1.0, 1.0), ylim = c (-1.0, 1.0)) + 
+  ggtitle('Aspirin')
+
+```
+
+Select features with associations opposite from disease for plotting. 
+```{r}
+tsdata <- subset (subdata, Congruence == "Opposite")
+tsdata$Number = factor (tsdata$Number, levels = unique (tsdata$Number [order (tsdata$`Effect size`, tsdata$Number)]), ordered = TRUE)
+tsdataPos <- subset (tsdata, `Effect size` > 0)
+tsdataNeg <- subset (tsdata, `Effect size` < 0)
+
+```
+
+Assemble the bar plot. 
+```{r}
+pDrug <- ggplot (tsdata, aes (x = `Effect size`, y = Number)) + 
+  geom_segment (aes (xend = `Effect size`, x = 0, y = Number, yend = Number, 
+                     color = as.factor (sign (tsdata$`Effect size`))), size = 4) +
+  scale_x_continuous (breaks = c (-1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0)) +
+  coord_cartesian (xlim = c (-1.0, 1.0)) +
+  theme (axis.title.x = element_blank (), axis.text.x = element_blank (),
+         axis.ticks.x = element_blank (), axis.title.y = element_blank (),
+         axis.text.y = element_blank (), axis.ticks.y = element_blank (),
+         legend.position = "none") +
+  geom_text (data = tsdataPos, aes (label = paste0 (tsdataPos$Number, ": ",
+                                                    tsdataPos$`Feature display name`),
+                                    y = Number, x = -0.01), hjust = 1, angle = 0, size = 3) +
+  geom_text (data = tsdataNeg, aes (label = paste0 (tsdataNeg$Number, ": ",
+                                                    tsdataNeg$`Feature display name`),
+                                    y = Number, x = 0.01), hjust = 0, angle = 0, size = 3) +
+  scale_color_manual (values = c ("#d73027", "#4575b4")) 
+
+```
+
+Combine two plots in a grid. 
+```{r, warning=FALSE}
+pGrid <- plot_grid (ncol = 1, p, pDrug, align = "v", axis = "bt", rel_heights = c (1, 2))
+
+```
+
+
+Display plot. 
+
+```{r, fig.width=6, fig.height=18}
+print (pGrid)
+
+```
+
+
+Uncomment to print plot to file. 
+```{r, warning=FALSE}
+#pdf(file = "fig1d_aspirine_associations.pdf", width=6, height=18)
+#print (pGrid)
+#dev.off ()
+```
+
+```{r}
+sessionInfo()
+```

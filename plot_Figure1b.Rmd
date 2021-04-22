@@ -1,0 +1,93 @@
+---
+title: "Figure 1b: Confounder analysis in drug-host-microbiome associations"
+output:
+  html_document:
+    df_print: paged
+---
+
+Violin plot representing confounder analysis of features associated with T2D group compared to control.
+
+Vertical axis shows Cliff’s delta, with density plots showing all features significant before drug deconfounding (two-sided MWU FDR < 0.1); number of features in each violin are listed. 
+
+All “naïve associations” (yellow violin) are separated into confounded or ambiguously/confidently deconfounded (blue, purple and red violins). About 45% of 2845 raw associations are reducible to medication effects (blue violin). Green violins show breakdown of significant drug confounders by drug category. 
+
+Required file in the _input_data_ folder:
+
+- Supplementary_Table_5_2019-09-13434.xlsx
+
+
+Load necessary libraries.
+```{r, warning=FALSE}
+library (ggplot2)
+library (readxl)
+```
+
+Define accessory function. 
+```{r}
+f <- function (y) c (label = length (y), y = median (y))
+```
+
+Read input data from Supplementary Table 5. 
+```{r}
+fileFolder = './input_data/'
+data <- read_excel(paste0(fileFolder,
+                             "Supplementary_Table_5_2019-09-13434.xlsx"), 
+                      sheet = "Confounder analysis")
+```
+
+Prepare data for plotting. 
+```{r}
+data$StatusD <- paste (data$Status, as.character (sign (data$`Effect size`)))
+
+# Get unique feature spaces
+spaces <- unique(data$`Feature space`)
+
+data <- subset (data,`Feature space` %in% spaces)
+
+# Get unique contrasts (patient groups)
+contrasts <- unique(data$Contrast)
+
+#Get unique confounder status
+stati <- unique(data$Status)
+
+data <- subset (data, Status %in% stati)
+```
+
+Plot violins for T2D group. 
+
+*Change group index or loop over all contrasts to plot for a different patient group.*
+
+```{r fig.width=20, fig.height=6, warning=FALSE}
+for (i in c(4)) { #for (i in 1:7)
+
+	subdata <- subset (data, Contrast == contrasts [i])
+
+	p <- ggplot (subdata, aes (x = as.factor (Status), y = `Effect size`)) + #theme_classic () +
+	  scale_x_discrete(limits = rev(levels(as.factor (data$Status)))) + 
+	  geom_violin (aes (fill = Status), scale = "count", draw_quantiles = c (0.25, 0.5, 0.75), size = 0.5, alpha = 0.3, width = 30, position = position_dodge ()) + 
+	  geom_hline (yintercept = 0) + 
+	  xlab ("") + 
+	  ylab ("Effect size (Cliff's delta)") +
+	  ggtitle(contrasts[i]) + 
+	  stat_summary (aes (col = subdata$Status, y = - 1), fun.data = f, geom = "text", vjust = 0, size = 4, angle = 45) + 
+	  theme (axis.text.x = element_text (angle = -90, hjust = 0, size = 12), 
+	         axis.text.y = element_text (size = 16), 
+	         axis.title.y = element_text (size = 16), legend.position = "none") +
+	  scale_fill_manual (values = c ("#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#00FF00", "#0000FF", "#FF00FF", "#FF0000", "#DDCC00")) + 
+	  scale_color_manual (values = c ("#009900", "#009900", "#009900", "#009900", "#009900", "#009900", "#0000FF", "#990099", "#990000", "#998800")) 
+
+	#Uncomment to print to file
+	#pdf (file = paste0 ("fig1b_flame_", i, ".pdf"), width = 20, height = 6)
+	print (p)
+	#dev.off ()
+
+}
+
+```
+
+
+```{r}
+sessionInfo()
+```
+
+

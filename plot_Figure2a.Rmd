@@ -1,0 +1,264 @@
+---
+title: "Figure 2a: Drug combinations statistics as barplot"
+output:
+  html_document:
+    df_print: paged
+---
+
+This script prints Figure 2a: Barplot representing the number of CMD patients receiving each drug (on the horizontal axis) singly or in combination with a specified number of other drugs.
+
+Required file in the _input_data_ folder:
+
+- Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+- data_drugs_dict.txt
+
+```{r, include=FALSE}
+#if (!requireNamespace(package = "rowr", quietly = TRUE))
+#  install.packages("rowr")
+
+#if (!requireNamespace(package = "arules", quietly = TRUE))
+#  install.packages("arules")
+
+#if (!requireNamespace(package = "arulesViz", quietly = TRUE))
+#  install.packages("arulesViz")
+```
+
+```{r, message=FALSE, warning=FALSE}
+set.seed(0)
+library(reshape2)
+library(stringr)
+library(dplyr)
+library(arules)
+library(arulesViz)
+library(igraph)
+library(ggplot2)
+library(RColorBrewer)
+library(readxl)
+```
+
+Load data required for plotting from files.
+```{r}
+folderName <- './input_data/'
+d.out <- "./"
+drug.indication <- paste(folderName, "drug.indication.tsv", sep="")
+dic.anno <- paste(folderName, "data_drugs_dict.txt", sep="")
+
+dir.create(d.out, showWarnings = F)
+
+infilename <- 'Supplementary_Tables_1_to_4_2019-09-13434.xlsx'
+# load patient drug uptake information
+sampleData_drug <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                 sheet = "ST 2b"))#, 
+# load patient metadata information
+sampleData_meta <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                        sheet = "ST 1b"))#, 
+# load drug combination intake information
+sampleData_comb <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                        sheet = "ST 3b"))#, 
+
+```
+
+Prepare data for processing.
+```{r}
+# prepare drug table
+rownames(sampleData_drug) = sampleData_drug[, "SampleID"]
+drop <- c( "SampleID" ,"PatientGroup","DRUGTOTAL")
+sampleData_drug = sampleData_drug[,!(colnames(sampleData_drug) %in% drop)]
+
+# prepare drug comb table
+rownames(sampleData_comb) <- sampleData_comb[, "SampleID"]
+drop <- c( "SampleID" ,"PatientGroup")
+sampleData_comb = sampleData_comb[,!(colnames(sampleData_comb) %in% drop)]
+
+# prepare metadata
+colnames(sampleData_meta)[2:6]<-c("PATGROUPFINAL_C", "GENDER", "BMI_C", "AGE", "CENTER_C")
+rownames(sampleData_meta) <- sampleData_meta[, "SampleID"]
+
+sample_extended_meta <- merge(sampleData_meta, sampleData_comb, by="row.names", all=TRUE)  
+drop <- c( "Row.names")
+sample_extended_meta = sample_extended_meta[,!(colnames(sample_extended_meta) %in% drop)]
+```
+
+Load data files for indication and drug abbreviations.
+```{r}
+# load drug abbreviation dictionary
+dic.anno <- read.delim(dic.anno, stringsAsFactors = F)
+
+# load rug indication info
+drug.indication = read.delim(drug.indication, stringsAsFactors = F)
+
+drugs <- sampleData_drug
+metadata <- sample_extended_meta
+```
+
+Edit Dictionary.
+```{r}
+dic.anno <- dic.anno %>% 
+  mutate(DisplayName = str_replace(DisplayName, " intake", ""))
+```
+
+Edit input data.
+```{r}
+## Filter out healthy patients
+metadata <- metadata[ metadata$PATGROUPFINAL_C != "8",]
+drugs <- drugs[match(metadata$SampleID, rownames(drugs)) ,]
+identical(metadata$SampleID %>% as.character(), rownames(drugs))
+
+## Remove collective drugs 
+drugs <- drugs [, !colnames(drugs) %in% 
+                  dic.anno[dic.anno$DisplayName %in%
+                             c("Antibiotics total",
+                               "Unknown antibiotic",
+                               "Any antilipid treatment",
+                               "Any antihypertensive treatment",
+                               "Any antidiabetic treatment"),
+                           "VariableID"]]
+```
+
+Filter out healthy patients.
+```{r}
+metadata <- metadata[ metadata$PATGROUPFINAL_C != "8",]
+drugs <- drugs[match(metadata$SampleID, rownames(drugs)) ,]
+identical(metadata$SampleID %>% as.character(), rownames(drugs))
+```
+
+Remove collective drugs.
+```{r}
+drugs <- drugs [, !colnames(drugs) %in% 
+                  dic.anno[dic.anno$DisplayName %in%
+                             c("Antibiotics total",
+                               "Unknown antibiotic",
+                               "Any antilipid treatment",
+                               "Any antihypertensive treatment",
+                               "Any antidiabetic treatment"),
+                           "VariableID"]]
+```
+
+Sync data with dictionary.
+```{r}
+drugs <- drugs[,colnames(drugs) %in% dic.anno$VariableID]
+dic.anno <- dic.anno[match(colnames(drugs), dic.anno$VariableID),]
+identical(dic.anno$VariableID, colnames(drugs))
+```
+
+### Format data
+
+Convert from factor to numeric.
+```{r}
+for (i in 1:ncol(drugs)){
+  drugs[,i] <- as.numeric(drugs[,i])-1
+}
+```
+
+Get frequent items.
+```{r, message=FALSE, warning=FALSE,results='hide'}
+## Format data input
+drugs.d <- drugs
+drugs.d <- as.data.frame(drugs.d >= 0)
+
+## Mine frequent itemsets with the Eclat algorithm
+freq.all=eclat(drugs.d,parameter=list(supp = 0.05))
+## Get clean data
+# freq.list <- utils::capture.output(inspect(freq.all))
+# test = ''
+# for(i in 1:length(freq.list)){
+#   test<-paste(test, freq.list[i],sep=' ')
+#   } 
+# freq.list <- strsplit(test, '\\{[^}]+ (*SKIP)(*FAIL)| \\s*', perl=TRUE)[1]
+# dd  <-  as.data.frame(t(matrix(unlist(freq.list), nrow=5, byrow=FALSE)))
+# dd <- dd[,-1]
+# names(dd) <- as.character(unlist(dd[1,]))
+# dd <- dd[-1,]
+# freq.list <- dd[-1,]
+## End of Get clean data
+# note: if running this code in console, instead of the code in Get clean data use
+freq.list <- as.data.frame(inspect(freq.all))
+freq.list$items <- gsub("\\{", "", freq.list$items)
+freq.list$items <- gsub("\\}", "", freq.list$items)
+freq.list$items <- gsub("\\s+", " ", freq.list$items)
+freq.list$items <- gsub(", ", ",", freq.list$items)
+freq.list$support <- as.numeric(as.character(freq.list$support))
+freq.list$transIdenticalToItemsets <- as.numeric(as.character(freq.list$transIdenticalToItemsets))
+freq.list$count <- as.numeric(as.character(freq.list$count))
+
+# Get most frequently used drugs ----
+freq.list <- freq.list %>% 
+  filter(!str_detect(items, ","))
+```
+
+
+Format to plot.
+```{r}
+## Add display name to the frequency list
+freq.list <- freq.list %>% 
+  left_join(dic.anno %>% select(VariableID, DisplayName), by = c("items" = "VariableID"))
+
+# convert drugs to dataframe
+drugs <- as.data.frame((drugs>=0)*1)
+## Count co-used drugs
+co.usage = NULL
+for (i in colnames(drugs)){
+  d.temp <- drugs %>%
+    filter(get(i) == 1) %>% 
+    select(-i) %>% 
+    rowSums(na.rm = T) %>% 
+    plyr::count() %>%
+    #add.coding
+    mutate(code = if_else(x == 0,
+                            "single",
+                            if_else(x < 8,
+                                    paste0("+",x),
+                                    "+8 or more"))) %>% 
+    group_by(code) %>%
+    summarise(frequency = sum(freq)) %>% 
+    mutate(drug = i)
+co.usage <- rbind(co.usage, d.temp)
+rm(d.temp)
+}
+
+## Format to plot -----
+co.usage <- co.usage %>% 
+  #add annotation
+  left_join(dic.anno %>% select(VariableID, DisplayName), by = c("drug" = "VariableID")) %>%
+  filter(DisplayName %in% freq.list$DisplayName) %>% 
+  #do some ordering for the plot
+  mutate(usage = factor(code, levels = c("single",
+                                        "+1",
+                                        "+2",
+                                        "+3",
+                                        "+4",
+                                        "+5",
+                                        "+6",
+                                        "+7",
+                                        "+8 or more"))) %>%
+  mutate(DisplayName = factor(DisplayName, levels = freq.list$DisplayName)) %>% 
+  mutate(drug = DisplayName)
+
+```
+
+  
+Plot.
+```{r}
+ggplot(co.usage, aes(x = drug, y = frequency, fill = usage)) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Paired") +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14)) +
+  ggpubr::rotate_x_text() +
+  labs(x = "", y = "Number of patients")
+
+# UNCOMMENT TO PRINT TO FILE
+#f.name <- paste(d.out, "fig2a_frequent.list.barplot.pdf", sep = "/")
+#pdf(f.name)
+# ggplot(co.usage, aes(x = drug, y = frequency, fill = usage)) +
+#   geom_bar(stat = "identity") +
+#   scale_fill_brewer(palette = "Paired") +
+#   theme_classic(base_size = 14) +
+#   theme(axis.text.x = element_text(size = 14),
+#         axis.text.y = element_text(size = 14)) +
+#   ggpubr::rotate_x_text() +
+#   labs(x = "", y = "Number of patients")
+#dev.off()
+
+```

@@ -1,0 +1,453 @@
+---
+title: "Figure 2b: Drug combinations graph"
+output:
+  html_document:
+    df_print: paged
+---
+
+This script prints Figure 2b: The thirty most common drug combinations represented as a graph.
+
+Node size is proportional to the number of combinations per drug; combinations with more than 3 drugs are omitted for better visualization.
+
+Drugs are represented in nodes coloured by drug indication. Drug combinations are shown in the network links. Combination pairs are represented by solid lines; triad combinations are represented by distinct dotted/dashed lines. Link width is proportional to the number of users per combination; colour corresponds to the number of potential drug effects.
+Combinations not tested are shown in gray.
+
+Required file in the _input_data_ folder:
+
+- Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+- Supplementary_Table_8_2019-09-13434.xlsx
+- drug.indication.tsv
+- data_drugs_dict.txt
+
+
+Load required libraries.
+```{r, message=FALSE, warning=FALSE}
+set.seed(0)
+library(reshape2)
+library(stringr)
+library(dplyr)
+library(arules)
+library(arulesViz)
+library(igraph)
+library(ggplot2)
+library(RColorBrewer)
+library(checkmate)
+library(readxl)
+```
+
+
+Load data required for plotting from files.
+```{r}
+folderName <- './input_data/'
+d.out <- "./"
+drug.indication <- paste(folderName, "drug.indication.tsv", sep="")
+dic.anno <- paste(folderName, "data_drugs_dict.txt", sep="")
+
+dir.create(d.out, showWarnings = F)
+
+infilename <- 'Supplementary_Tables_1_to_4_2019-09-13434.xlsx'
+# load patient drug uptake information
+sampleData_drug <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                 sheet = "ST 2b"))#, 
+# load patient metadata information
+sampleData_meta <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                        sheet = "ST 1b"))#, 
+# load drug combination intake information
+sampleData_comb <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                        sheet = "ST 3b"))#, 
+
+```
+
+Define accessory functions.
+```{r}
+add.alpha <- function(col, alpha=1){
+  if(missing(col))
+    stop("Please provide a vector of colours.")
+  apply(sapply(col, col2rgb)/255, 2,
+        function(x)
+          rgb(x[1], x[2], x[3], alpha=alpha))
+}
+```
+
+Calculate the number of associations per drug from Supplementary Table 8
+```{r}
+infilename <- 'Supplementary_Table_8_2019-09-13434.xlsx'
+
+combData <- as.matrix(read_excel(paste(folderName,infilename,sep=''),
+                                 sheet = "Data"))#, 
+
+combData_unique <- unique((combData[,"Effector"]))
+
+effects_all <- rep(0,length(combData_unique))
+effects_same <- rep(0,length(combData_unique))
+effects_opp <- rep(0,length(combData_unique))
+
+first_array <- rep('NA',length(combData_unique))
+second_array <- rep('NA',length(combData_unique))
+third_array <- rep('NA',length(combData_unique))
+
+for (i in 1:length(combData_unique)){
+  test <- combData[combData[,'Effector']==combData_unique[i],'Congruence']
+  effects_all[i] = length(test)
+  effects_opp[i] = sum(test=='Opposite')
+  effects_same[i] = sum(test=='Same')
+  curdrugs = str_split(combData_unique[i],'intake', simplify = TRUE)
+  first_drug = curdrugs[1]
+  first_drug = str_replace(first_drug, 'Combination: ', '')
+  first_drug = str_trim(first_drug)
+  second_drug = curdrugs[2]
+  second_drug = str_replace(second_drug, ', ', '')
+  second_drug = str_trim(second_drug)
+
+  first_array[i] = first_drug
+  second_array[i] = second_drug
+
+  if (length(curdrugs)>3){
+    third_drug = curdrugs[3]
+    third_drug = str_replace(third_drug, ', ', '')
+    third_drug = str_trim(third_drug)
+    third_array[i] = third_drug
+  }
+}
+
+synergy <- data.frame(first_array, second_array, third_array,
+                              effects_all, effects_same, effects_opp)
+colnames(synergy) <- c("Drug1",	"Drug2", "Drug3",
+                              "AnySynergy",	"SeverityMarker",	"HealthImprovement")
+#replace text NA with numeric NA
+synergy[synergy=='NA']=NA
+```
+
+
+
+Prepare data for processing.
+```{r}
+# prepare drug table
+rownames(sampleData_drug) = sampleData_drug[, "SampleID"]
+drop <- c( "SampleID" ,"PatientGroup","DRUGTOTAL")
+sampleData_drug = sampleData_drug[,!(colnames(sampleData_drug) %in% drop)]
+
+# prepare drug comb table
+rownames(sampleData_comb) <- sampleData_comb[, "SampleID"]
+drop <- c( "SampleID" ,"PatientGroup")
+sampleData_comb = sampleData_comb[,!(colnames(sampleData_comb) %in% drop)]
+
+# prepare metadata
+colnames(sampleData_meta)[2:6]<-c("PATGROUPFINAL_C", "GENDER", "BMI_C", "AGE", "CENTER_C")
+rownames(sampleData_meta) <- sampleData_meta[, "SampleID"]
+
+sample_extended_meta <- merge(sampleData_meta, sampleData_comb, by="row.names", all=TRUE)  
+drop <- c( "Row.names")
+sample_extended_meta = sample_extended_meta[,!(colnames(sample_extended_meta) %in% drop)]
+```
+
+Load data files for indication and drug abbreviations.
+```{r}
+# load drug abbreviation dictionary
+dic.anno <- read.delim(dic.anno, stringsAsFactors = F)
+
+# load rug indication info
+drug.indication = read.delim(drug.indication, stringsAsFactors = F)
+
+drugs <- sampleData_drug
+metadata <- sample_extended_meta
+```
+
+
+Edit Dictionary.
+```{r}
+dic.anno <- dic.anno %>% 
+  mutate(DisplayName = str_replace(DisplayName, " intake", ""))
+
+```
+
+Edit input data.
+```{r}
+## Filter out healthy patients
+metadata <- metadata[ metadata$PATGROUPFINAL_C != "8",]
+drugs <- drugs[match(metadata$SampleID, rownames(drugs)) ,]
+identical(metadata$SampleID %>% as.character(), rownames(drugs))
+
+## Remove collective drugs 
+drugs <- drugs [, !colnames(drugs) %in% 
+                  dic.anno[dic.anno$DisplayName %in%
+                             c("Antibiotics total",
+                               "Unknown antibiotic",
+                               "Any antilipid treatment",
+                               "Any antihypertensive treatment",
+                               "Any antidiabetic treatment"),
+                           "VariableID"]]
+```
+
+
+Sync data with dictionary.
+```{r}
+drugs <- drugs[,colnames(drugs) %in% dic.anno$VariableID]
+dic.anno <- dic.anno[match(colnames(drugs), dic.anno$VariableID),]
+identical(dic.anno$VariableID, colnames(drugs))
+
+```
+
+Format data
+```{r}
+## Rename columns to be the display variable
+colnames(drugs) <- dic.anno$DisplayName
+
+## Convert from factor to numeric
+#for (i in 1:ncol(drugs)){
+#  drugs[,i] <- as.numeric(drugs[,i])-1
+#}
+# Get frequent items ----
+## Format data input
+drugs.d <- drugs
+drugs.d <- as.data.frame(drugs.d > 0)
+
+## Mine frequent itemsets with the Eclat algorithm
+freq.all=eclat(drugs.d,parameter=list(supp = 0.05))
+# ## Get clean data
+freq.list <- utils::capture.output(inspect(freq.all))
+test = ''
+for(i in 1:length(freq.list)){
+  test<-paste(test, freq.list[i],sep=' ')
+  }
+freq.list <- strsplit(test, '\\{[^}]+ (*SKIP)(*FAIL)| \\s*', perl=TRUE)[1]
+dd  <-  as.data.frame(t(matrix(unlist(freq.list), nrow=5, byrow=FALSE)))
+dd <- dd[,-1]
+names(dd) <- as.character(unlist(dd[1,]))
+dd <- dd[-1,]
+freq.list <- dd[-1,]
+## End of Get clean data
+# note: if running this code in console, instead of the code in Get clean data use
+#freq.list <- as.data.frame(inspect(freq.all))
+freq.list$items <- gsub("\\{", "", freq.list$items)
+freq.list$items <- gsub("\\}", "", freq.list$items)
+freq.list$items <- gsub("\\s+", " ", freq.list$items)
+freq.list$items <- gsub(", ", ",", freq.list$items)
+freq.list$support <- as.numeric(as.character(freq.list$support))
+freq.list$transIdenticalToItemsets <- as.numeric(as.character(freq.list$transIdenticalToItemsets))
+freq.list$count <- as.numeric(as.character(freq.list$count))
+```
+
+Write raw output.
+```{r}
+#UNCOMMENT TO PRINT FREQUENCIES TO FILE
+#f.name <- paste(d.out, "frequent.list.5.tsv", sep = "")
+#write.table(freq.list, f.name, row.names = F, sep = "\t", quote =F )
+```
+
+
+Annotate number of drugs in freq-items co-usage.
+```{r}
+freq.list <- freq.list %>%
+  mutate (n = str_count(items, ",") + 1)
+```
+
+Filter what to plot in the network.
+```{r}
+to.net <- freq.list %>%
+  # Keep combinations with up to 3 drugs
+  filter(n <= 3, n > 1)
+
+to.net$id = 0
+synergy$id = 1:nrow(synergy)
+```
+
+
+Identify which freq items have synergy information by common id.
+```{r}
+for (x in 1:nrow(to.net)){
+  set1 = to.net[x, "items"]
+  set1 = str_split(set1, ",")[[1]]
+  set1 = str_trim((set1))
+  for (y in 1:nrow(synergy)){
+    set2 = synergy[y,c("Drug1", "Drug2", "Drug3")]
+    set2 = set2[!is.na(set2)]
+    if(testSetEqual(set1, set2, ordered = F)){to.net$id[x]=synergy$id[y]}
+    }
+}
+```
+
+Filter network by count and add synergy information.
+```{r}
+top = 30
+
+to.net <- synergy %>%
+  select(-Drug1, -Drug2, -Drug3) %>%
+  right_join(to.net) %>%
+  top_n(n = top, wt = count)
+```
+
+
+```{r, warning=FALSE}
+# Define cbind/fill function as in https://gist.github.com/abelsonlive/4112423
+cbind.fill<-function(...){
+    nm <- list(...)
+    nm<-lapply(nm, as.matrix)
+    n <- max(sapply(nm, nrow))
+    do.call(cbind, lapply(nm, function (x)
+    rbind(x, matrix(, n-nrow(x), ncol(x)))))
+}
+```
+
+Format it to plot.
+```{r}
+## Get from and to edges
+df.convoluted <- NULL
+x <- 0
+for (i in 1:nrow(to.net)){
+its <- as.character(to.net[i,"items"])
+its <-  str_split(its, ",")[[1]]
+n <- length(its)
+x <- x+1
+if (n > 1) {
+  its <- cbind(t(combn(its, 2)), code = x) %>%
+    data.frame(stringsAsFactors = F)
+  colnames(its) <- c("from", "to", "code")
+  its <- as.data.frame(cbind.fill(its, to.net[i,]))
+  df.convoluted <- rbind(df.convoluted,
+                         its)
+  }
+}
+
+## Transform info as character
+
+df.convoluted <- df.convoluted %>%
+  mutate(from = as.character(from),
+         to =  as.character(to),
+         code = as.character(code))
+
+## Add edge with
+x = 1
+df.convoluted$edge.lty <- 1
+for (i in unique(df.convoluted$code)){
+  d.temp <- df.convoluted[df.convoluted$code == i,]
+  if(nrow(d.temp) > 1){x <- x+1
+  df.convoluted[df.convoluted$code == i, "edge.lty"] <- x}
+}
+
+## Vertex width
+vert <- c(df.convoluted$from, df.convoluted$to) %>%
+  unique() %>%
+  sort() %>%
+  data.frame(stringsAsFactors = F)
+colnames(vert) = "vert"
+vert <- vert %>%
+  left_join(freq.list, by = c("vert" = "items")) %>%
+  left_join(drug.indication,
+            by = c("vert" = "Drug"))
+```
+
+
+Build network.
+```{r}
+net  <- graph_from_data_frame(d = df.convoluted, vertices = vert, directed=F)
+```
+
+
+Make cosmetic additions to it.
+```{r}
+## Make gradient of colors
+rbPal <- colorRampPalette(c("#43C6AC","#191654"))
+df.convoluted$Col <- add.alpha(rbPal(10)[
+  as.numeric(cut(as.numeric(as.character(df.convoluted$HealthImprovement)), breaks = 10))], 0.8)
+# #Mod color of NAs
+col.2 <- add.alpha("#545454", 0.8)
+df.convoluted <- df.convoluted %>%
+  mutate(Col = if_else(is.na(HealthImprovement), col.2, Col))
+```
+```{r}
+## Colors of nodes
+n.col = length(unique(vert$Indication))
+pal <- brewer.pal(n = 8, name = "Dark2")[c(1:3,5:6)]
+pal <-  colorRampPalette(pal)(n.col)
+
+## Get degrees
+deg <- igraph::degree(net, mode="all")
+```
+```{r}
+## Config vertex
+V(net)$size=sqrt(deg-0.20)*9
+V(net)$label.family="Helvetica"
+V(net)$frame.color = NA
+V(net)$label.color = "black"
+V(net)$color = pal[as.numeric(factor(vert$Indication))]
+V(net)$label.cex <- 1.2
+```
+
+```{r}
+## Config edge
+E(net)$label.dist=-2
+E(net)$label.cex = 0.9
+E(net)$label.colour = rep("black", nrow(df.convoluted))
+
+E(net)$width = as.numeric(as.character(df.convoluted$count))/40
+
+E(net)$color <- df.convoluted$Col
+E(net)$label.color = "darkgray"
+
+E(net)$lty <- df.convoluted$edge.lty
+l <- layout_with_kk(net)
+l <- layout_in_circle(net)
+```
+
+
+
+#Plot
+```{r, warning=FALSE}
+par(mar=c(0,0,0,0))
+plot(net, layout=l,
+    edge.label.color = "darkgrey")#edge.label.family = "Arial")
+```
+
+```{r}
+## UNCOMMENT TO PRINT TO FILE
+#f.name <- paste(d.out, "fig2b_network.pdf", sep ="/")
+#pdf(f.name)
+#par(mar=c(0,0,0,0))
+#plot(net, layout=l,
+#    edge.label.color = "darkgrey",
+#    edge.label.family = "Helvetica")
+#dev.off()
+```
+
+
+Plot legends separately
+```{r}
+## Legend colors vertex
+vert.unique <- vert %>%
+  select(n, Indication) %>%
+  unique()
+
+#f.name <- paste(d.out, "network.legend.1.pdf", sep ="/")
+#pdf(f.name)
+barplot(rep(5, nrow(vert.unique)), col = pal, legend.text = vert.unique$Indication %>% sort())
+#dev.off()
+```
+
+
+Legend colors edge
+```{r}
+values  <- seq(from = min(as.numeric(as.character(df.convoluted$HealthImprovement)), na.rm = T),
+    to = max(as.numeric(as.character(df.convoluted$HealthImprovement)), na.rm = T))
+rbPal <- colorRampPalette(c("#43C6AC","#191654"))
+col.legend <- add.alpha(rbPal(10)[
+  as.numeric(cut(values, breaks = 10))], 0.8)
+col.legend <- data.frame(values, col.legend, stringsAsFactors = F)
+col.legend$v <- rep(1, nrow(col.legend))
+
+#f.name <- paste(d.out, "network.legend.2.pdf", sep ="/")
+#pdf(f.name)
+
+barplot(as.matrix(data.frame(b = col.legend$v)),
+        col = col.legend$col.legend, ylim = c(0, 90), beside = F,
+        border=NA, space=0, xlab = 'Number of potential drug effects')
+
+#dev.off()
+
+
+```
+
+```{r}
+sessionInfo()
+```
+
