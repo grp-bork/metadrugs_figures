@@ -236,6 +236,9 @@ print (pg)
 ```
 
 
+```{r}
+sessionInfo()
+```
 
 
 
