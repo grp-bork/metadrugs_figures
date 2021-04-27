@@ -1,4 +1,4 @@
-# metaDrug_figures
+﻿# metaDrug_figures
 
 This repository contains notebooks to plot the figures associated with the manuscript
 
@@ -10,11 +10,11 @@ Code contributions by: Sofia K. Forslund, Lucas Moitinho-Silva, Thomas S. B. Sch
 
 ## Contents:
 
-*All notebook files provided with a source code (.Rmd/.ipynb) and in a .html version with the results available for viewing without running the notebooks.*
+*All notebook files provided with a source code (.Rmd/.ipynb) in the *source_code* folder and in a .html version with the results available for viewing without running the notebooks.*
 
-- *plot_Figure1b.Rmd/html*
+- *plot_Figure1ab.Rmd/html*
 
-Figure 1b: Confounder analysis in drug-host-microbiome associations
+Figure 1ab: Confounder analysis in drug-host-microbiome associations
 
 - *plot_Figure1c_feature_clustergrams.ipynb/html*
 
@@ -44,7 +44,14 @@ Figure 2cd: Drug combination associations with host and microbiome
 
 Figure 2e: Drug combination associations with host and microbiome - example of mediation analysis results
 
+- example_mediation_analysis.py
+Python script to perform mediation analysis for the three drug combinations in Figure 2e.
+
 - *plot_Figure3d_dosage.ipynb/html*
+
+Figure 3abs: Associations between long-term antibiotic exposure and microbiome
+
+- *plot_Figure3abc_abxcourses.ipynb/html*
 
 Figure 3d: Heatmap of drug dosage-associated features
 
@@ -54,7 +61,7 @@ Figure 3ef: Dosage-associated enterotype features
 
 ######################################################
 # To run the notebooks, the following input data folder is required: 
-Folder *input_data* located in the root directory containing the files:
+Folder *input_data* located in the directory *source_code* containing the files:
 
 - Supplementary_Table_10_2019-09-13434.xlsx
 - Supplementary_Table_13_2019-09-13434.xlsx
@@ -70,6 +77,8 @@ Folder *input_data* located in the root directory containing the files:
 - group_T2D_associations.txt
 - hub.enterotype.v1.data.frame.r
 - hub.pheno.v8.data.frame.r
+- hub.microbiome.summary.down.10000000.r
+- hub.motus.SpeciesCluster.down.10000000.r
 - snps_ppi_input.txt
 
 All filed are available for download at doi:...
