@@ -1,0 +1,244 @@
+---
+title: "Figure 3abc: Associations between long-term antibiotic exposure and microbiome"
+output:
+  html_document:
+    df_print: paged
+---
+
+This script plots Figure 3abc: Additive drug effects on the microbiome features.
+
+Scatterplots show microbiome features (a. Gene richness; b. Total abundance of antibiotic resistance genes; c. The first principal component of gut species composition) significantly associated with the number of antibiotics courses in the last 5 years in control and T2D subjects separately (with lines and gray area 95% CI for linear regression). 
+
+Boxplots (box showing median and quartiles, whiskers 1.5 interquartile range) show the comparisons in antibiotics-naïve and antibiotics-exposed control and T2D subjects, respectively, with pairwise significances (two-sided MWU tests, FDR-adjusted).
+
+Required file in the _input_data_ folder:
+
+- Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+- hub.microbiome.summary.down.10000000.r
+- hub.motus.SpeciesCluster.down.10000000.r
+
+
+Load necessary libraries. 
+```{r, warning=FALSE, message=FALSE}
+library (factoextra)
+library (vegan)
+library (reshape2)
+library (gtools)
+library (ggplot2)
+library (orddom)
+library (cowplot)
+library (readxl)
+```
+
+Read antibiotic course data from Supplementary Table 2d. 
+```{r}
+fileFolder = './input_data/'
+md <- read_excel(paste0(fileFolder,
+                             "Supplementary_Tables_1_to_4_2019-09-13434.xlsx"), 
+                      sheet = "ST 2d")
+```
+
+Leave only patients with information on antibiotic courses (column ANTIBIOTICS_TOTAL)
+```{r}
+md <- subset (md, ! is.na (ANTIBIOTICS_TOTAL))
+md <- as.data.frame(md)
+row.names (md) <- md$SampleID
+```
+
+Get microbiome feature data from files.
+```{r}
+ssd <- read.table (file = paste0(fileFolder,
+                                 "hub.microbiome.summary.down.10000000.r"),
+                   header = T, check.names = F, sep = "\t")
+ssdata <- dcast (ssd, value.var = "FeatureValue", formula = SampleID ~ Feature)
+row.names (ssdata) <- ssdata$SampleID
+```
+
+Keep only samples with both antibiotic and microbiome data.
+```{r}
+md <- subset (md, SampleID %in% intersect (row.names (md), row.names (ssdata)))
+ssdata <- subset (ssdata, SampleID %in% intersect (row.names (md), row.names (ssdata)))
+
+md <- merge (ssdata, md, by = "SampleID")
+row.names (md) <- md$SampleID
+
+```
+
+Restrict analysis to diabetics without AB exposure and to controls
+
+```{r}
+comp1 <- subset (md, (ANTIBIOTICS_TOTAL == 0 & PatientGroup == "3") | PatientGroup == "8")$SampleID
+
+```
+
+Load metagenome data from file. 
+
+```{r}
+data <- read.table (file = paste0(fileFolder, 
+                                  "hub.motus.SpeciesCluster.down.10000000.r"),
+                    header = T, sep = "\t")
+data <- subset (data, SampleID %in% row.names (md))
+
+# subset samples from the first comparison
+data1 <- subset (data, SampleID %in% comp1)
+
+#reshape into matrices
+ddata <- dcast (data, formula = SampleID ~ Feature, value.var = "FeatureValue")
+ddata1 <- dcast (data, formula = SampleID ~ Feature, value.var = "FeatureValue")
+row.names (ddata) <- ddata$SampleID
+row.names (ddata1) <- ddata1$SampleID
+ddata <- ddata [, -1]
+ddata1 <- ddata1 [, -1]
+ddata <- na.omit (ddata)
+ddata1 <- na.omit (ddata1)
+
+md <- subset (md, SampleID %in% row.names (ddata))
+
+```
+
+Perform PCA analysis
+
+```{r}
+cds <- prcomp (ddata1, retx = T)
+
+# project all samples into that space
+
+ccds <- as.matrix (ddata) %*% cds$rotation
+
+ccds <- merge (ccds, md, by = 0)
+```
+
+Testing AB associations
+
+```{r, warning=FALSE}
+# corr between AB courses and PC in controls
+ccdssub1 <- subset (ccds, PatientGroup == "8")
+cor.test (ccdssub1$PC1, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
+cor.test (ccdssub1$PC2, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
+
+# corr between AB courses and PC in T2D patients
+ccdssub2 <- subset (ccds, PatientGroup == "3")
+cor.test (ccdssub2$PC1, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+cor.test (ccdssub2$PC2, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+```
+
+Perform Wilcoxon test for principal components between patient and control groups on ABX and not. 
+```{r}
+s8na <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & PatientGroup == "8")
+s8a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "8")
+s3na <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & PatientGroup == "3")
+s3a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "3")
+
+wilcox.test (s8na$PC2, s8a$PC2)
+wilcox.test (s3na$PC2, s3a$PC2)
+wilcox.test (s8na$PC2, s3na$PC2)
+wilcox.test (s8a$PC2, s3a$PC2)
+wilcox.test (s8na$PC2, s3a$PC2)
+wilcox.test (s8a$PC2, s3na$PC2)
+```
+
+Perform Wilcoxon test for gene richness between patient and control groups on ABX and not. 
+```{r}
+wilcox.test (s8na$GeneCount10M, s8a$GeneCount10M)
+wilcox.test (s3na$GeneCount10M, s3a$GeneCount10M)
+wilcox.test (s8na$GeneCount10M, s3na$GeneCount10M)
+wilcox.test (s8a$GeneCount10M, s3a$GeneCount10M)
+wilcox.test (s8na$GeneCount10M, s3a$GeneCount10M)
+wilcox.test (s8a$GeneCount10M, s3na$GeneCount10M)
+```
+
+Perform Wilcoxon test for CARD antibiotic resistance genes between patient and control groups on ABX and not. 
+```{r}
+wilcox.test (s8na$CARD10M, s8a$CARD10M)
+wilcox.test (s3na$CARD10M, s3a$CARD10M)
+wilcox.test (s8na$CARD10M, s3na$CARD10M)
+wilcox.test (s8a$CARD10M, s3a$CARD10M)
+wilcox.test (s8na$CARD10M, s3a$CARD10M)
+wilcox.test (s8a$CARD10M, s3na$CARD10M)
+```
+
+```{r}
+ccdssub2 <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & (PatientGroup == "8" | PatientGroup == "3"))
+wilcox.test (ccdssub2$PC1 ~ ccdssub2$PatientGroup)
+wilcox.test (ccdssub2$PC2 ~ ccdssub2$PatientGroup)
+orddom (subset (ccdssub2, PatientGroup == "8")$PC2, subset (ccdssub2, PatientGroup == "3")$PC2) [13]
+
+ccdssub3 <- subset (ccds, PatientGroup == "8" | PatientGroup == "3")
+ccdssub3$Status <- paste (as.character (10 - as.numeric (as.character(ccdssub3$PatientGroup))), as.numeric (ccdssub3$ANTIBIOTICS_TOTAL > 0))
+wilcox.test (ccdssub3$PC2 ~ ccdssub3$PatientGroup)
+orddom (subset (ccdssub3, PatientGroup == "8")$PC2, subset (ccdssub3, PatientGroup == "3")$PC2) [13]
+```
+
+Plot AB courses vs PC, diversity, ARG abundance
+```{r}
+p_abx_pc1 <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = PC1)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
+  geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (- 400, 3200)) 
+
+p_t2d_pc1 <- ggplot (ccdssub3, aes (x = as.factor (Status), y = PC1)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (- 400, 3200)) + 
+  scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
+
+p_abx_pc2 <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = PC2)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
+  geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (- 400, 3200))
+
+p_t2d_pc2 <- ggplot (ccdssub3, aes (x = as.factor (Status), y = PC2)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (- 400, 3200)) + 
+  scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
+
+p_abx_gc <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = GeneCount10M)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
+  geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (100000, 1000000))
+
+p_t2d_gc <- ggplot (ccdssub3, aes (x = as.factor (Status), y = GeneCount10M)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (100000, 1000000)) + 
+  scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
+
+p_abx_abx <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = CARD10M)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
+  geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
+  coord_cartesian (ylim = c (85000, 165000)) 
+
+p_t2d_abx <- ggplot (ccdssub3, aes (x = as.factor (Status), y = CARD10M)) + 
+  theme_classic () + theme (legend.position = "none") + 
+  geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
+  #geom_jitter(color="black", size=0.4, alpha=0.9) +
+  coord_cartesian (ylim = c (85000, 165000)) + 
+  scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
+```
+
+Make the plot
+
+```{r, fig.width=6, fig.height=10, warning=FALSE}
+pg <- plot_grid (p_abx_gc, p_t2d_gc, p_abx_abx, p_t2d_abx, p_abx_pc2, p_t2d_pc2,
+                 ncol = 2, nrow = 3, 
+                 labels = c ("", "", "", "", "", ""), align = "v")
+
+print (pg)
+# UNCOMMENT TO SAVE FIGURE TO FILE
+#pdf (file = "fig3abc_abx_courses_associations.pdf", width = 6, height = 10)
+#print (pg)
+#dev.off ()
+```
+
+
+
+
+
+
+
+
