@@ -1,11 +1,13 @@
 ---
-title: "Figure 1b: Confounder analysis in drug-host-microbiome associations"
+title: "Figure 1a,b: Confounder analysis in drug-host-microbiome associations"
 output:
   html_document:
     df_print: paged
 ---
 
-Violin plot representing confounder analysis of features associated with T2D group compared to control.
+a. Stacked bar charts show variance explained (R squared) by explanatory variable group and type of measurement.
+
+b. Violin plot representing confounder analysis of features associated with T2D group compared to control.
 
 Vertical axis shows Cliff’s delta, with density plots showing all features significant before drug deconfounding (two-sided MWU FDR < 0.1); number of features in each violin are listed. 
 
@@ -21,6 +23,46 @@ Load necessary libraries.
 library (ggplot2)
 library (readxl)
 ```
+
+## Plot bar plot of explained variance per feture type
+Read input data from Supplementary Table 5. 
+```{r}
+fileFolder = './input_data/'
+data_rsq <- read_excel(paste0(fileFolder,
+                             "Supplementary_Table_5_2019-09-13434.xlsx"), 
+                      sheet = "Summarized variance explained")
+```
+
+Select feature space to plot.
+```{r}
+#subdata <- subset (data, Space %in% c ("MGS", "KEGG pathway", "CARD ARO", "Lipoproteins", "Serum"))
+select_space <- c ("MGS", "KEGG module", "CARD ARO", "Lipoproteins", "Serum")
+subdata <- subset (data_rsq,`Feature space` %in% select_space)
+subdata = subdata[subdata$Category != 'Intersection',]
+subdata = subdata[subdata$Category != 'Stool form',]
+# sort types of features
+subdata$`Feature space` <- factor(subdata$`Feature space`, 
+                                  levels = select_space)
+```
+
+Assemble bar plot.
+```{r}
+p <- ggplot (subdata[order(subdata$Category), ], aes (x = `Feature space`, y = `Total adjusted R squared from significant factors`)) + 
+  theme_classic () + 
+  geom_bar (aes (fill = Category), stat = "identity", color = "black") + 
+  xlab ("") + ylab ("") + scale_fill_brewer (type = "qual", palette = "Paired")
+
+print (p)
+#Uncomment to print to file
+#pdf (file = paste0 ("fig1a_bar_rsq.pdf"))
+#print (p)
+#dev.off ()
+
+```
+
+
+
+## Plot violin plots
 
 Define accessory function. 
 ```{r}
