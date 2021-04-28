@@ -15,7 +15,7 @@ Required file in the _input_data_ folder:
 
 - Supplementary_Tables_1_to_4_2019-09-13434.xlsx
 - hub.microbiome.summary.down.10000000.r
-- hub.motus.SpeciesCluster.down.10000000.r
+- hub.cellcount.motu.Species.v2.data.frame.r
 
 
 Load necessary libraries. 
@@ -45,7 +45,7 @@ md <- as.data.frame(md)
 row.names (md) <- md$SampleID
 ```
 
-Get microbiome feature data from files.
+Get microbiome diversity data from files.
 ```{r}
 ssd <- read.table (file = paste0(fileFolder,
                                  "hub.microbiome.summary.down.10000000.r"),
@@ -75,7 +75,7 @@ Load metagenome data from file.
 
 ```{r}
 data <- read.table (file = paste0(fileFolder, 
-                                  "hub.motus.SpeciesCluster.down.10000000.r"),
+                                  "hub.cellcount.motu.Species.v2.data.frame.r"),
                     header = T, sep = "\t")
 data <- subset (data, SampleID %in% row.names (md))
 
@@ -100,11 +100,19 @@ Perform PCA analysis
 
 ```{r}
 cds <- prcomp (ddata1, retx = T)
+```
 
-# project all samples into that space
-
+Calculate proportion of variance explained by each component
+```{r}
+cds.var.explained = cds$sdev^2
+cds.var.explained <- cds.var.explained/sum(cds.var.explained)
+# display how much variance explained by the first and second components
+print(paste0('PC1 explains ', round(cds.var.explained[1]*100), '% of variance'))
+print(paste0('PC2 explains ', round(cds.var.explained[2]*100), '% of variance'))
+```
+Project all samples into the PC space
+```{r}
 ccds <- as.matrix (ddata) %*% cds$rotation
-
 ccds <- merge (ccds, md, by = 0)
 ```
 
@@ -113,13 +121,14 @@ Testing AB associations
 ```{r, warning=FALSE}
 # corr between AB courses and PC in controls
 ccdssub1 <- subset (ccds, PatientGroup == "8")
-cor.test (ccdssub1$PC1, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
-cor.test (ccdssub1$PC2, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
-
+ccc <- cor.test (ccdssub1$PC1, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Spearman corr between PC1 and AB courses in controls is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
 # corr between AB courses and PC in T2D patients
 ccdssub2 <- subset (ccds, PatientGroup == "3")
-cor.test (ccdssub2$PC1, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
-cor.test (ccdssub2$PC2, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+ccc<-cor.test (ccdssub2$PC1, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Spearman corr between PC1 and AB courses T2D group is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
 ```
 
 Perform Wilcoxon test for principal components between patient and control groups on ABX and not. 
@@ -129,70 +138,58 @@ s8a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "8")
 s3na <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & PatientGroup == "3")
 s3a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "3")
 
-wilcox.test (s8na$PC2, s8a$PC2)
-wilcox.test (s3na$PC2, s3a$PC2)
-wilcox.test (s8na$PC2, s3na$PC2)
-wilcox.test (s8a$PC2, s3a$PC2)
-wilcox.test (s8na$PC2, s3a$PC2)
-wilcox.test (s8a$PC2, s3na$PC2)
+print (paste ("PC1 in T2D no-abx vs T2D abx Wilcoxon p-value=", wilcox.test (s3na$PC1, s3a$PC1)$p.value))
+print (paste ("PC1 in CTRL no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8na$PC1, s8a$PC1)$p.value))
+print (paste ("PC1 in T2D no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s3na$PC1, s8a$PC1)$p.value))
+print (paste ("PC1 in T2D abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3a$PC1, s8na$PC1)$p.value))
+print (paste ("PC1 in T2D abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8a$PC1, s3a$PC1)$p.value))
+print (paste ("PC1 in T2D no-abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3na$PC1, s8na$PC1)$p.value))
+
 ```
 
 Perform Wilcoxon test for gene richness between patient and control groups on ABX and not. 
 ```{r}
-wilcox.test (s8na$GeneCount10M, s8a$GeneCount10M)
-wilcox.test (s3na$GeneCount10M, s3a$GeneCount10M)
-wilcox.test (s8na$GeneCount10M, s3na$GeneCount10M)
-wilcox.test (s8a$GeneCount10M, s3a$GeneCount10M)
-wilcox.test (s8na$GeneCount10M, s3a$GeneCount10M)
-wilcox.test (s8a$GeneCount10M, s3na$GeneCount10M)
+print (paste ("Gene richness in T2D no-abx vs T2D abx Wilcoxon p-value=", wilcox.test (s3na$GeneCount10M, s3a$GeneCount10M)$p.value))
+print (paste ("Gene richness in CTRL no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8na$GeneCount10M, s8a$GeneCount10M)$p.value))
+print (paste ("Gene richness in T2D no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s3na$GeneCount10M, s8a$GeneCount10M)$p.value))
+print (paste ("Gene richness in T2D abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3a$GeneCount10M, s8na$GeneCount10M)$p.value))
+print (paste ("Gene richness in T2D abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8a$GeneCount10M, s3a$GeneCount10M)$p.value))
+print (paste ("Gene richness in T2D no-abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3na$GeneCount10M, s8na$GeneCount10M)$p.value))
 ```
 
 Perform Wilcoxon test for CARD antibiotic resistance genes between patient and control groups on ABX and not. 
 ```{r}
-wilcox.test (s8na$CARD10M, s8a$CARD10M)
-wilcox.test (s3na$CARD10M, s3a$CARD10M)
-wilcox.test (s8na$CARD10M, s3na$CARD10M)
-wilcox.test (s8a$CARD10M, s3a$CARD10M)
-wilcox.test (s8na$CARD10M, s3a$CARD10M)
-wilcox.test (s8a$CARD10M, s3na$CARD10M)
+print (paste ("AMR gene abundance in T2D no-abx vs T2D abx Wilcoxon p-value=", wilcox.test (s3na$CARD10M, s3a$CARD10M)$p.value))
+print (paste ("AMR gene abundance in CTRL no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8na$CARD10M, s8a$CARD10M)$p.value))
+print (paste ("AMR gene abundance in T2D no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s3na$CARD10M, s8a$CARD10M)$p.value))
+print (paste ("AMR gene abundance in T2D abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3a$CARD10M, s8na$CARD10M)$p.value))
+print (paste ("AMR gene abundance in T2D abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8a$CARD10M, s3a$CARD10M)$p.value))
+print (paste ("AMR gene abundance in T2D no-abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3na$CARD10M, s8na$CARD10M)$p.value))
 ```
-
+Select subgroups for plotting. 
 ```{r}
 ccdssub2 <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & (PatientGroup == "8" | PatientGroup == "3"))
-wilcox.test (ccdssub2$PC1 ~ ccdssub2$PatientGroup)
-wilcox.test (ccdssub2$PC2 ~ ccdssub2$PatientGroup)
-orddom (subset (ccdssub2, PatientGroup == "8")$PC2, subset (ccdssub2, PatientGroup == "3")$PC2) [13]
+# wilcox.test (ccdssub2$PC1 ~ ccdssub2$PatientGroup)
+# orddom (subset (ccdssub2, PatientGroup == "8")$PC2, subset (ccdssub2, PatientGroup == "3")$PC2) [13]
 
 ccdssub3 <- subset (ccds, PatientGroup == "8" | PatientGroup == "3")
 ccdssub3$Status <- paste (as.character (10 - as.numeric (as.character(ccdssub3$PatientGroup))), as.numeric (ccdssub3$ANTIBIOTICS_TOTAL > 0))
-wilcox.test (ccdssub3$PC2 ~ ccdssub3$PatientGroup)
-orddom (subset (ccdssub3, PatientGroup == "8")$PC2, subset (ccdssub3, PatientGroup == "3")$PC2) [13]
+# wilcox.test (ccdssub3$PC2 ~ ccdssub3$PatientGroup)
+# orddom (subset (ccdssub3, PatientGroup == "8")$PC2, subset (ccdssub3, PatientGroup == "3")$PC2) [13]
 ```
 
-Plot AB courses vs PC, diversity, ARG abundance
+Plot AB courses vs PC, diversity, AMR abundance
 ```{r}
 p_abx_pc1 <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = PC1)) + 
   theme_classic () + theme (legend.position = "none") + 
   geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
   geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
-  coord_cartesian (ylim = c (- 400, 3200)) 
+  coord_cartesian (ylim = c (-35000000000, 35000000000))#35000000000)) 
 
 p_t2d_pc1 <- ggplot (ccdssub3, aes (x = as.factor (Status), y = PC1)) + 
   theme_classic () + theme (legend.position = "none") + 
   geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
-  coord_cartesian (ylim = c (- 400, 3200)) + 
-  scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
-
-p_abx_pc2 <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = PC2)) + 
-  theme_classic () + theme (legend.position = "none") + 
-  geom_point (size = 0.5, alpha = 0.5, aes (colour = as.factor (PatientGroup))) + 
-  geom_smooth (method = "lm", aes (colour = as.factor (PatientGroup))) + 
-  coord_cartesian (ylim = c (- 400, 3200))
-
-p_t2d_pc2 <- ggplot (ccdssub3, aes (x = as.factor (Status), y = PC2)) + 
-  theme_classic () + theme (legend.position = "none") + 
-  geom_boxplot (aes (fill = as.factor (PatientGroup))) + 
-  coord_cartesian (ylim = c (- 400, 3200)) + 
+  coord_cartesian (ylim = c (-35000000000, 35000000000)) + 
   scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
 
 p_abx_gc <- ggplot (ccdssub3, aes (x = ANTIBIOTICS_TOTAL, y = GeneCount10M)) + 
@@ -219,12 +216,13 @@ p_t2d_abx <- ggplot (ccdssub3, aes (x = as.factor (Status), y = CARD10M)) +
   #geom_jitter(color="black", size=0.4, alpha=0.9) +
   coord_cartesian (ylim = c (85000, 165000)) + 
   scale_x_discrete(labels= c('CTR noAB', 'CTR AB', 'T2D noAB', 'T2D AB'))
+
 ```
 
 Make the plot
 
 ```{r, fig.width=6, fig.height=10, warning=FALSE}
-pg <- plot_grid (p_abx_gc, p_t2d_gc, p_abx_abx, p_t2d_abx, p_abx_pc2, p_t2d_pc2,
+pg <- plot_grid (p_abx_gc, p_t2d_gc, p_abx_abx, p_t2d_abx, p_abx_pc1, p_t2d_pc1,
                  ncol = 2, nrow = 3, 
                  labels = c ("", "", "", "", "", ""), align = "v")
 

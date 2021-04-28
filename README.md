@@ -78,7 +78,7 @@ Folder *input_data* located in the directory *source_code* containing the files:
 - hub.enterotype.v1.data.frame.r
 - hub.pheno.v8.data.frame.r
 - hub.microbiome.summary.down.10000000.r
-- hub.motus.SpeciesCluster.down.10000000.r
+- hub.cellcount.motu.Species.v2.data.frame.r
 - snps_ppi_input.txt
 
 All filed are available for download at doi:...
