@@ -44,7 +44,7 @@ Figure 2cd: Drug combination associations with host and microbiome
 
 Figure 2e: Drug combination associations with host and microbiome - example of mediation analysis results
 
-- example_mediation_analysis.py
+- plot_Figure2e_example_mediation_analysis.ipynb/html*
 Python script to perform mediation analysis for the three drug combinations in Figure 2e.
 
 - *plot_Figure3abc_abxcourses.ipynb/html*
