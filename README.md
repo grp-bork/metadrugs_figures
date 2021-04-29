@@ -12,6 +12,10 @@ Code contributions by: Sofia K. Forslund, Lucas Moitinho-Silva, Thomas S. B. Sch
 
 *All notebook files provided with a source code (.Rmd/.ipynb) in the *source_code* folder and as a .html version with the results available for viewing without running the notebooks.*
 
+- *PlotFigures.Rproj*
+
+Rproject file associated with the source_code directory to ease navigation within the R notebooks. *Tip: To run source Rmd notebooks, first open the PlotFigures.Rproj file from RStudio environment, and then navigate to the Rmd files in the home directory*. 
+
 - *plot_Figure1ab.Rmd/html*
 
 Figure 1ab: Confounder analysis in drug-host-microbiome associations
