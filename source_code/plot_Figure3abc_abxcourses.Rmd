@@ -1,5 +1,5 @@
 ---
-title: "Figure 3abc: Associations between long-term antibiotic exposure and microbiome"
+title: "Figure 3abc: Associations between long-term antibiotic exposure and microbiome features"
 output:
   html_document:
     df_print: paged
@@ -7,16 +7,23 @@ output:
 
 This script plots Figure 3abc: Additive drug effects on the microbiome features.
 
-Scatterplots show microbiome features (a. Gene richness; b. Total abundance of antibiotic resistance genes; c. The first principal component of gut species composition) significantly associated with the number of antibiotics courses in the last 5 years in control and T2D subjects separately (with lines and gray area 95% CI for linear regression). 
+Scatterplots show microbiome features (**a. Gene richness; b. Total abundance of antibiotic resistance genes; c. The first principal component of gut species composition**) significantly associated with the number of antibiotics courses in the last 5 years in control and T2D subjects separately (with lines and gray area 95% CI for linear regression). 
 
 Boxplots (box showing median and quartiles, whiskers 1.5 interquartile range) show the comparisons in antibiotics-naïve and antibiotics-exposed control and T2D subjects, respectively, with pairwise significances (two-sided MWU tests, FDR-adjusted).
 
 Required file in the _input_data_ folder:
 
 - Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+
+Supplementary Tables 1 to 4 include information on the cohort characteristics and drug intake with source metadata. Source metadata for the MetaCardis cohort includes disease group, gender, age, study center, body mass index (BMI, kg/m2), alternative healthy eating index (aHEI), diet diversity score (DDS), and dietary approaches to stop hypertension (DASH), physical activity and manual work levels, and smoking status. Source data includes information on the drug intake, drug combinations, dosage and antibiotic use analyzed in the MetaCardis cohort.
+
 - hub.microbiome.summary.down.10000000.r
+
+File with source data on summary microbiome features per sample (such as gene richness, abundance of antibiotic resistance genes, etc.)
+
 - hub.cellcount.motu.Species.v2.data.frame.r
 
+File with source data on microbial species abundances estimated with mOTU software.  
 
 Load necessary libraries. 
 ```{r, warning=FALSE, message=FALSE}
@@ -147,6 +154,21 @@ print (paste ("PC1 in T2D no-abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test 
 
 ```
 
+Calculate correlation between ABX courses and gene richness. 
+```{r, warning=FALSE}
+# corr between AB courses and Gene richness in controls
+ccdssub1 <- subset (ccds, PatientGroup == "8")
+ccc <- cor.test (ccdssub1$GeneCount10M, ccdssub1$ANTIBIOTICS_TOTAL, 
+                 method = "spearman")
+print(paste0('Spearman corr between Gene richness and AB courses in controls is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
+# corr between AB courses and Gene richness in T2D patients
+ccdssub2 <- subset (ccds, PatientGroup == "3")
+ccc<-cor.test (ccdssub2$GeneCount10M, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Spearman corr between Gene richness and AB courses T2D group is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
+```
+
 Perform Wilcoxon test for gene richness between patient and control groups on ABX and not. 
 ```{r}
 print (paste ("Gene richness in T2D no-abx vs T2D abx Wilcoxon p-value=", wilcox.test (s3na$GeneCount10M, s3a$GeneCount10M)$p.value))
@@ -155,6 +177,21 @@ print (paste ("Gene richness in T2D no-abx vs CTRL abx Wilcoxon p-value=", wilco
 print (paste ("Gene richness in T2D abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3a$GeneCount10M, s8na$GeneCount10M)$p.value))
 print (paste ("Gene richness in T2D abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8a$GeneCount10M, s3a$GeneCount10M)$p.value))
 print (paste ("Gene richness in T2D no-abx vs CTRL no-abx Wilcoxon p-value=", wilcox.test (s3na$GeneCount10M, s8na$GeneCount10M)$p.value))
+```
+
+Calculate correlation between ABX courses and CARD antibiotic resistance genes. 
+```{r, warning=FALSE}
+# corr between AB courses and AMR gene abundance in controls
+ccdssub1 <- subset (ccds, PatientGroup == "8")
+ccc <- cor.test (ccdssub1$CARD10M, ccdssub1$ANTIBIOTICS_TOTAL, 
+                 method = "spearman")
+print(paste0('Spearman corr between AMR gene abundance and AB courses in controls is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
+# corr between AB courses and AMR gene abundance in T2D patients
+ccdssub2 <- subset (ccds, PatientGroup == "3")
+ccc<-cor.test (ccdssub2$CARD10M, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Spearman corr between AMR gene abundance and AB courses T2D group is ',
+             ccc$estimate, ' (p-value=', ccc$p.value,')'))
 ```
 
 Perform Wilcoxon test for CARD antibiotic resistance genes between patient and control groups on ABX and not. 

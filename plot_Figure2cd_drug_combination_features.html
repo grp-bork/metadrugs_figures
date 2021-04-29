@@ -13077,23 +13077,30 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Figure-2cde:-Drug-combination-associations-with-host-and-microbiome">Figure 2cde: Drug combination associations with host and microbiome<a class="anchor-link" href="#Figure-2cde:-Drug-combination-associations-with-host-and-microbiome">&#182;</a></h2>
+<h2 id="Figure-2cd:-Drug-combination-associations-with-host-and-microbiome">Figure 2cd: Drug combination associations with host and microbiome<a class="anchor-link" href="#Figure-2cd:-Drug-combination-associations-with-host-and-microbiome">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This script prints Figure 2cde: c. Additive effects of drug combinations in T2D patient group. The heatmap shows the number of features (separated into host and microbiome) that are affected by the drug combination more strongly than by single drugs in T2D group. The values on the diagonal correspond to the number of features affected by the single drug in T2D group. All features are deconfounded, and drug associations are discordant with the disease effect and significant (two-sided MWU FDR &lt; 0.1).</p>
-<p>d. Selected supra-additive combination effects. Figure shows effect size (Cliff’s delta) and direc-tion of disease associations (T2D, red), individual drug effects (other colours) and effects of the drug combinations (black) in T2D group for the combination of statin and metformin, aspirin or calcium antagonist.</p>
-<p>Specifically, 1) effect of the drug combination is significant (MWU FDR &lt; 0.1) and passes all confounder filters, 2) disease association is opposite in direction to that of the drug combination and 3) the combination additionally achieves significance in a nested linear model comparison test (likelihood ratio post-hoc P &lt; 0.05) for supra-additivity, that is, the combination offers predictive capacity beyond the individual drugs all included as separate predictors.</p>
+<p>This script prints Figure 2cd: <strong>c. Additive effects of drug combinations in T2D patient group.</strong> The heatmap shows the number of features (separated into host and microbiome) that are affected by the drug combination more strongly than by single drugs in T2D group. The values on the diagonal correspond to the number of features affected by the single drug in T2D group. All features are deconfounded, and drug associations are discordant with the disease effect and significant (two-sided MWU FDR &lt; 0.1).</p>
+<p><strong>d. Selected supra-additive combination effects.</strong> Figure shows effect size (Cliff’s delta) and direction of disease associations (T2D, red), individual drug effects (other colours) and effects of the drug combinations (black) in T2D group for the combination of statin and metformin, statin and aspirin, and statin and calcium antagonist.</p>
+<p>Specifically, the features are shown if 1) effect of the drug combination is significant (MWU FDR &lt; 0.1) and passes all confounder filters, 2) disease association is opposite in direction to that of the drug combination and 3) the combination additionally achieves significance in a nested linear model comparison test (likelihood ratio post-hoc P &lt; 0.05) for supra-additivity, that is, the combination offers predictive capacity beyond the individual drugs all included as separate predictors.</p>
 <p>Each  line on the vertical axis corresponds to one feature – drug combination pair.</p>
-<p>e. Mediation analysis of the host and microbiome features for the selected drug combinations. Drug-feature effect graph representing potential feature mediation effects between host and microbiome features. Solid lines represent drug effects on the feature, colour represents direction of the effect. Dashed lines between features indicate potential mediation (general mediation model one-sided P  &lt; 0.1 ), colour represents the sign of Pearson’s correlation coefficient (P &lt; 0.1).</p>
-<p>Required file in the _input<em>data</em> folder:</p>
+<p>Required file in the <em>input_data</em> folder:</p>
 <ul>
 <li>Supplementary_Table_6_2019-09-13434.xlsx</li>
+</ul>
+<p>Supplementary Table 6: Features of microbiome, host and metabolome impacted by different drug groups and drug compounds. Results of drug group (or drug compound according to the ATC classification) assessment for its impact on host and microbiome features for each patient group. Compound comparison with Maier et al., Nature 2018, tab shows microbiome features negatively impacted by the drug treatment (for the ATC-level compounds) in at least one patient group, and bacterial species whose growth was inhibited by the same drug in the in vitro experiment.</p>
+<ul>
 <li>Supplementary_Table_8_2019-09-13434.xlsx</li>
 </ul>
+<p>Supplementary Table 8: Features of microbiome, host and metabolome impacted by different drug combinations. Analysis of the effect of drug combinations, assessed for impact on host and microbiome falling within different measurement categories in each patient group.</p>
+<ul>
+<li>group_T2D_associations.txt</li>
+</ul>
+<p>File containing all associations between drugs and features in T2D group (both significant and non-significant).</p>
 <p>Figure is based on the data from Supplementary Tables 6 and 8.</p>
 
 </div>
@@ -13142,8 +13149,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[214]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extract features associated with the drugs in direction opposite from the disease effect</span>
-<span class="n">drugIntakedata_opposite</span> <span class="o">=</span> <span class="n">drugEffect</span><span class="p">[</span><span class="n">drugEffect</span><span class="p">[</span><span class="s1">&#39;Congruence&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;Opposite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extract features associated with the drugs </span>
+<span class="c1"># in direction opposite from the disease effect</span>
+<span class="n">drugIntakedata_opposite</span> <span class="o">=</span> <span class="n">drugEffect</span><span class="p">[</span><span class="n">drugEffect</span><span class="p">[</span><span class="s1">&#39;Congruence&#39;</span><span class="p">]</span><span class="o">==</span>
+                                                 <span class="s1">&#39;Opposite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13173,9 +13182,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[216]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extract features associated with the drugs in direction opposite from the disease effect</span>
-<span class="n">drugCombodata</span> <span class="o">=</span> <span class="n">drugCombinationEffect</span><span class="p">[</span>
-    <span class="n">drugCombinationEffect</span><span class="p">[</span><span class="s1">&#39;Congruence&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;Opposite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extract features associated with the drugs </span>
+<span class="c1"># in direction opposite from the disease effect</span>
+<span class="n">drugCombodata</span> <span class="o">=</span> <span class="n">drugCombinationEffect</span><span class="p">[</span><span class="n">drugCombinationEffect</span><span class="p">[</span><span class="s1">&#39;Congruence&#39;</span><span class="p">]</span><span class="o">==</span>
+                                                            <span class="s1">&#39;Opposite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13243,7 +13253,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[219]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># change [conditions[4]] to conditions to plot the figures for each patient group</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># change [conditions[4]] to &#39;conditions&#39; to plot the figures </span>
+<span class="c1"># for each patient group</span>
 <span class="c1"># conditions[4] is T2D</span>
 <span class="k">for</span> <span class="n">curcond</span> <span class="ow">in</span> <span class="p">[</span><span class="n">conditions</span><span class="p">[</span><span class="mi">4</span><span class="p">]]:</span>
     <span class="n">DrugCombo_FeatureSpace_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">DrugCombo</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">Feature_space</span><span class="p">)</span>
@@ -13336,8 +13347,7 @@ div#notebook {
     <span class="n">img1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">tripcolor</span><span class="p">(</span><span class="n">triang1</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">colormax</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="n">colormax</span><span class="p">)</span>
     <span class="n">img2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">tripcolor</span><span class="p">(</span><span class="n">triang2</span><span class="p">,</span> <span class="n">zs2</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">colormax</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="n">colormax</span><span class="p">)</span>
 
-    <span class="c1">#plt.colorbar(img2, ticks=range(10), pad=-0.05)</span>
-    <span class="n">clb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img1</span><span class="p">)</span><span class="c1">#, ticks=range(10))</span>
+    <span class="n">clb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img1</span><span class="p">)</span>
     <span class="n">clb</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;[&lt;-Micro] Number of features [Host-&gt;]&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
@@ -13653,12 +13663,10 @@ div#notebook {
         <span class="c1"># get combination features</span>
         <span class="n">curcombo</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sample_effector_unique</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">==</span><span class="nb">str</span><span class="p">]</span>
         <span class="n">curcombo</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">curcombo</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">cureffectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cureffectors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+                   <span class="k">if</span> <span class="p">(</span><span class="n">cureffectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cureffectors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">cureffect_df</span> <span class="o">=</span> <span class="n">allEffects_df</span><span class="p">[(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curcombo</span><span class="p">)</span> <span class="o">&amp;</span>
-                                     <span class="p">(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curset</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="c1">#cureffect_df = drugCombinationEffect[(drugCombinationEffect[&#39;Effector&#39;]==curcombo) &amp;</span>
-        <span class="c1">#                             (drugCombinationEffect[&#39;Sample set&#39;]==curset)].copy()</span>
+                                  <span class="p">(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curset</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         
         <span class="c1"># combine all single and all combo</span>
         <span class="n">selectedEffectd_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">selectedEffectd_df</span><span class="p">,</span> <span class="n">cureffect_df</span><span class="p">])</span>
@@ -13708,7 +13716,7 @@ div#notebook {
                                     <span class="o">&amp;</span>
             <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature space&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">features_combined_space</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                                  <span class="o">&amp;</span>
-            <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">features_combined_features</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">features_combined_features</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                                 <span class="p">]</span>
 
             <span class="c1"># add to dataframe</span>
@@ -13730,23 +13738,6 @@ div#notebook {
     <span class="n">plotdata</span> <span class="o">=</span> <span class="n">feature_effect_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="p">[</span><span class="n">plotdata</span><span class="p">[</span><span class="n">curcombo</span><span class="p">]</span><span class="o">*</span><span class="n">plotdata</span><span class="p">[</span><span class="n">curgroup</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1"># dropindx = []</span>
-    <span class="c1"># for curidx in plotdata.index:</span>
-    <span class="c1">#     if plotdata.loc[curidx,curcombo]&gt;0:</span>
-    <span class="c1">#         if ((plotdata.loc[curidx,curcombo] &lt; </span>
-    <span class="c1">#              plotdata.loc[curidx,cureffectors[0]]) |</span>
-    <span class="c1">#             (plotdata.loc[curidx,curcombo] &lt; </span>
-    <span class="c1">#              plotdata.loc[curidx,cureffectors[1]])):</span>
-    <span class="c1">#             dropindx.append(curidx)</span>
-    <span class="c1">#     if plotdata.loc[curidx,curcombo]&lt;0:</span>
-    <span class="c1">#         if ((plotdata.loc[curidx,curcombo] &gt; </span>
-    <span class="c1">#              plotdata.loc[curidx,cureffectors[0]]) |</span>
-    <span class="c1">#             (plotdata.loc[curidx,curcombo] &gt; </span>
-    <span class="c1">#              plotdata.loc[curidx,cureffectors[1]])):</span>
-    <span class="c1">#             dropindx.append(curidx)      </span>
-
-    <span class="c1">#plotdata = plotdata.drop(index=dropindx)</span>
-
     <span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Host&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Serum&#39;</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="ow">or</span> 
                                   <span class="p">(</span><span class="s1">&#39;Urine&#39;</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="ow">or</span>
                                   <span class="p">(</span><span class="s1">&#39;Phenotype&#39;</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -13767,79 +13758,35 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Prepare dataframe to plot.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[228]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata_combined</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
+<span class="c1"># save index of each record in column Numbers </span>
+<span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Numbers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plotdata</span><span class="p">))</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[229]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Numbers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plotdata</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[230]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">,</span><span class="s1">&#39;Disease&#39;</span><span class="p">])</span>
+<span class="c1"># sort by type and disease</span>
+<span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">,</span><span class="s1">&#39;Disease&#39;</span><span class="p">])</span>
 <span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Type&#39;</span><span class="p">)</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
+<span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Disease&#39;</span><span class="p">)</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[231]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Disease&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[232]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata_drug1</span> <span class="o">=</span> <span class="p">[</span><span class="n">plotdata_combined_drug1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Numbers&#39;</span><span class="p">]]</span>
+<span class="n">plotdata_drug1</span> <span class="o">=</span> <span class="p">[</span><span class="n">plotdata_combined_drug1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Numbers&#39;</span><span class="p">]]</span>
 <span class="n">plotdata_drug2</span> <span class="o">=</span> <span class="p">[</span><span class="n">plotdata_combined_drug2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Numbers&#39;</span><span class="p">]]</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[233]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Numbers&#39;</span><span class="p">)</span>
+<span class="c1"># remove Numbers column</span>
+<span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Numbers&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>

@@ -15,9 +15,20 @@ Combinations not tested are shown in gray.
 Required file in the _input_data_ folder:
 
 - Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+
+Supplementary Tables 1 to 4 include information on the cohort characteristics and drug intake with source metadata. Source metadata for the MetaCardis cohort includes disease group, gender, age, study center, body mass index (BMI, kg/m2), alternative healthy eating index (aHEI), diet diversity score (DDS), and dietary approaches to stop hypertension (DASH), physical activity and manual work levels, and smoking status. Source data includes information on the drug intake, drug combinations, dosage and antibiotic use analyzed in the MetaCardis cohort.
+
 - Supplementary_Table_8_2019-09-13434.xlsx
-- drug.indication.tsv
+
+Supplementary Table 8: Features of microbiome, host and metabolome impacted by different drug combinations. Analysis of the effect of drug combinations, assessed for impact on host and microbiome falling within different measurement categories in each patient group. 
+
 - data_drugs_dict.txt
+
+File containing the mapping between drug IDs in the metadata table and drug names and variable type
+
+- drug.indication.tsv
+
+File containing the mapping between drug name and indication. 
 
 
 Load required libraries.
@@ -193,10 +204,6 @@ Format data
 ## Rename columns to be the display variable
 colnames(drugs) <- dic.anno$DisplayName
 
-## Convert from factor to numeric
-#for (i in 1:ncol(drugs)){
-#  drugs[,i] <- as.numeric(drugs[,i])-1
-#}
 # Get frequent items ----
 ## Format data input
 drugs.d <- drugs

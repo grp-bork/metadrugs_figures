@@ -15,6 +15,8 @@ Required file in the _input_data_ folder:
 
 - Supplementary_Table_6_2019-09-13434.xlsx
 
+Supplementary Table 6: Features of microbiome, host and metabolome impacted by different drug groups and drug compounds. Results of drug group (or drug compound according to the ATC classification) assessment for its impact on host and microbiome features for each patient group. Compound comparison with Maier et al., Nature 2018, tab shows microbiome features negatively impacted by the drug treatment (for the ATC-level compounds) in at least one patient group, and bacterial species whose growth was inhibited by the same drug in the in vitro experiment.
+
 
 Load necessary libraries. 
 ```{r, warning=FALSE}

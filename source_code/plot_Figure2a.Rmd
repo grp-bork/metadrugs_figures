@@ -10,9 +10,20 @@ This script prints Figure 2a: Barplot representing the number of CMD patients re
 Required file in the _input_data_ folder:
 
 - Supplementary_Tables_1_to_4_2019-09-13434.xlsx
+
+Supplementary Tables 1 to 4 include information on the cohort characteristics and drug intake with source metadata. Source metadata for the MetaCardis cohort includes disease group, gender, age, study center, body mass index (BMI, kg/m2), alternative healthy eating index (aHEI), diet diversity score (DDS), and dietary approaches to stop hypertension (DASH), physical activity and manual work levels, and smoking status. Source data includes information on the drug intake, drug combinations, dosage and antibiotic use analyzed in the MetaCardis cohort.
+
 - data_drugs_dict.txt
 
+File containing the mapping between drug IDs in the metadata table and drug names and variable type
+
+- drug.indication.tsv
+
+File containing the mapping between drug name and indication. 
+
+
 ```{r, include=FALSE}
+# Uncomment and edit if some packages need to be downloaded. 
 #if (!requireNamespace(package = "rowr", quietly = TRUE))
 #  install.packages("rowr")
 
@@ -23,6 +34,7 @@ Required file in the _input_data_ folder:
 #  install.packages("arulesViz")
 ```
 
+Load necessary libraries.
 ```{r, message=FALSE, warning=FALSE}
 set.seed(0)
 library(reshape2)
@@ -119,6 +131,7 @@ Filter out healthy patients.
 ```{r}
 metadata <- metadata[ metadata$PATGROUPFINAL_C != "8",]
 drugs <- drugs[match(metadata$SampleID, rownames(drugs)) ,]
+# check consistency between drug variable names
 identical(metadata$SampleID %>% as.character(), rownames(drugs))
 ```
 
@@ -138,6 +151,7 @@ Sync data with dictionary.
 ```{r}
 drugs <- drugs[,colnames(drugs) %in% dic.anno$VariableID]
 dic.anno <- dic.anno[match(colnames(drugs), dic.anno$VariableID),]
+# check consistency between drug variable names
 identical(dic.anno$VariableID, colnames(drugs))
 ```
 
@@ -159,19 +173,6 @@ drugs.d <- as.data.frame(drugs.d >= 0)
 ## Mine frequent itemsets with the Eclat algorithm
 freq.all=eclat(drugs.d,parameter=list(supp = 0.05))
 ## Get clean data
-# freq.list <- utils::capture.output(inspect(freq.all))
-# test = ''
-# for(i in 1:length(freq.list)){
-#   test<-paste(test, freq.list[i],sep=' ')
-#   } 
-# freq.list <- strsplit(test, '\\{[^}]+ (*SKIP)(*FAIL)| \\s*', perl=TRUE)[1]
-# dd  <-  as.data.frame(t(matrix(unlist(freq.list), nrow=5, byrow=FALSE)))
-# dd <- dd[,-1]
-# names(dd) <- as.character(unlist(dd[1,]))
-# dd <- dd[-1,]
-# freq.list <- dd[-1,]
-## End of Get clean data
-# note: if running this code in console, instead of the code in Get clean data use
 freq.list <- as.data.frame(inspect(freq.all))
 freq.list$items <- gsub("\\{", "", freq.list$items)
 freq.list$items <- gsub("\\}", "", freq.list$items)
@@ -261,4 +262,8 @@ ggplot(co.usage, aes(x = drug, y = frequency, fill = usage)) +
 #   labs(x = "", y = "Number of patients")
 #dev.off()
 
+```
+
+```{r}
+sessionInfo()
 ```

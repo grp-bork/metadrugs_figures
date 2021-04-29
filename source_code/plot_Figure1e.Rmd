@@ -1,5 +1,5 @@
 ---
-title: "Figure 1e: SNV analysis results"
+title: "Figure 1e: SNV analysis results in PPI treatment"
 output:
   html_document:
     df_print: paged
@@ -11,14 +11,15 @@ The cuneiform plot shows the change in bacterial species abundance in the gut in
 
 Rows marked “SNV” show whether such oral strain markers are significantly (two-sided MWU FDR < 0.1) enriched over gut strain markers in MetaCardis subjects taking PPIs, controlling for abundance of each species. 
 
-Marker direction, color and size  and hue denotes the sign and value of Cliff’s delta standardized effect size, whereas intensity and size denote amplitude of effect size; opaque markers are signifi-cantly altered (two-sided MWU  FDR < 0.1; passing all confounder checks).
+Marker direction and color  denote the sign and value of Cliff’s delta standardized effect size, whereas intensity and size denote amplitude of the effect size; opaque markers are significantly altered (two-sided MWU  FDR < 0.1; passing all confounder checks).
 
-Bacteria are shown if their abundance is significantly altered under PPI consumption, and there are SNPs distinguishing oral from gut strains in the HMP. 
+Bacteria are shown if their abundance is significantly altered under PPI consumption, and there are SNPs distinguishing oral from gut strains in the Human Microbiome Project dataset. 
 
 Required file in the _input_data_ folder:
 
 - snps_ppi_input.txt
 
+File contains the information on effect size and statistic of association between the abundance of selected [potentially] oral strains and PPI intake across patient groups.
 
 Load necessary libraries.
 ```{r, warning=FALSE}

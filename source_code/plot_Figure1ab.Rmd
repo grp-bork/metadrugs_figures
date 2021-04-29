@@ -17,6 +17,8 @@ Required file in the _input_data_ folder:
 
 - Supplementary_Table_5_2019-09-13434.xlsx
 
+Supplementary Table 5 Multivariate breakdown of variance. The table includes multivariate breakdown of variance for each feature space by each predictor, a summary of all interaction terms in the models, and the results of the confounder analysis for all patient groups analyzed in the MetaCardis cohort. 
+
 
 Load necessary libraries.
 ```{r, warning=FALSE}
@@ -24,7 +26,7 @@ library (ggplot2)
 library (readxl)
 ```
 
-## Plot bar plot of explained variance per feture type
+## Plot bar plot of explained variance per feature type
 Read input data from Supplementary Table 5. 
 ```{r}
 fileFolder = './input_data/'
@@ -35,7 +37,7 @@ data_rsq <- read_excel(paste0(fileFolder,
 
 Select feature space to plot.
 ```{r}
-#subdata <- subset (data, Space %in% c ("MGS", "KEGG pathway", "CARD ARO", "Lipoproteins", "Serum"))
+# Species abundance, KEGG module abundance, CARD Antibiotic resistance gene abundance, Host lipoproteins, host serum metabolites
 select_space <- c ("MGS", "KEGG module", "CARD ARO", "Lipoproteins", "Serum")
 subdata <- subset (data_rsq,`Feature space` %in% select_space)
 subdata = subdata[subdata$Category != 'Intersection',]
@@ -50,7 +52,7 @@ Assemble bar plot.
 p <- ggplot (subdata[order(subdata$Category), ], aes (x = `Feature space`, y = `Total adjusted R squared from significant factors`)) + 
   theme_classic () + 
   geom_bar (aes (fill = Category), stat = "identity", color = "black") + 
-  xlab ("") + ylab ("") + scale_fill_brewer (type = "qual", palette = "Paired")
+  xlab ("") + ylab ("Variance explained") + scale_fill_brewer (type = "qual", palette = "Paired")
 
 print (p)
 #Uncomment to print to file
@@ -100,12 +102,12 @@ Plot violins for T2D group.
 *Change group index or loop over all contrasts to plot for a different patient group.*
 
 ```{r fig.width=20, fig.height=6, warning=FALSE}
+# Group 4 stands for T2D group.
 for (i in c(4)) { #for (i in 1:7)
 
 	subdata <- subset (data, Contrast == contrasts [i])
 
-	p <- ggplot (subdata, aes (x = as.factor (Status), y = `Effect size`)) + #theme_classic () +
-	  scale_x_discrete(limits = rev(levels(as.factor (data$Status)))) + 
+	p <- ggplot (subdata, aes (x = as.factor (Status), y = `Effect size`)) + 	  scale_x_discrete(limits = rev(levels(as.factor (data$Status)))) + 
 	  geom_violin (aes (fill = Status), scale = "count", draw_quantiles = c (0.25, 0.5, 0.75), size = 0.5, alpha = 0.3, width = 30, position = position_dodge ()) + 
 	  geom_hline (yintercept = 0) + 
 	  xlab ("") + 

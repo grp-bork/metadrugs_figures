@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>plot_Figure2E_mediation_graph</title>
+<title>plot_Figure2e_example_mediation_analysis</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13077,45 +13077,50 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Figure-2e:-Drug-combination-associations-with-host-and-microbiome">Figure 2e: Drug combination associations with host and microbiome<a class="anchor-link" href="#Figure-2e:-Drug-combination-associations-with-host-and-microbiome">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This script prepares input for Figure 2e: <strong>Mediation analysis of the host and microbiome features for the selected drug combinations.</strong> Drug-feature effect graph representing potential feature mediation effects between host and microbiome features. Solid lines represent drug effects on the feature, colour represents direction of the effect. Dashed lines between features indicate potential mediation (general mediation model one-sided P  &lt; 0.1 ), colour represents the sign of Pearson’s correlation coefficient (P &lt; 0.1).</p>
-<p>For visualization purposes, the edges between drugs and features in this graph have the value of drug combination effect size for the corresponding combination. (E.g. if combination of statin wih calcium antagonist synergistically decrease VLDL Cholesterol, both statin and calcium antagonist have an edge connecting them with VLDL cholesterol, which has the edge value of the combination effect size).</p>
-<p>Required file in the <em>input_data</em> folder:</p>
+<h2 id="Example-mediation-analysis-for-the-host-and-microbiome-features.">Example mediation analysis for the host and microbiome features.<a class="anchor-link" href="#Example-mediation-analysis-for-the-host-and-microbiome-features.">&#182;</a></h2><p>Mediation is modelled accordint to the statsmodels.stats.mediation package:
+Basic mediation analysis with regression model accordint to [1].</p>
+<p>The outcome model: <em>FeatureValue_1 ~ Drug + FeatureValue_2</em></p>
+<p>is tested against mediator model: <em>FeatureValue_2 ~ Drug</em>,</p>
+<p>where FeatureValue1 and FeatureValue2 are associated with the Drug treatment.<br>
+Mediation analysis is performed in both directions 
+(FeatureValue1 is tested as mediator and FeatureValue2 is tested as mediator).</p>
+<p>The script crreates mediation results dataframe and saves it to file.</p>
+<p>[1] Imai, Keele, Tingley (2010). A general approach to causal mediation analysis. 
+Psychological Methods 15:4, 309-334. 
+<a href="http://imai.princeton.edu/research/files/BaronKenny.pdf">http://imai.princeton.edu/research/files/BaronKenny.pdf</a></p>
+<p>Required files in the <em>input_data</em> folder:</p>
 <ul>
-<li>Supplementary_Table_6_2019-09-13434.xlsx</li>
+<li>Supplementary_Tables_1_to_4_2019-09-13434.xlsx</li>
 </ul>
-<p>Supplementary Table 6: Features of microbiome, host and metabolome impacted by different drug groups and drug compounds. Results of drug group (or drug compound according to the ATC classification) assessment for its impact on host and microbiome features for each patient group. Compound comparison with Maier et al., Nature 2018, tab shows microbiome features negatively impacted by the drug treatment (for the ATC-level compounds) in at least one patient group, and bacterial species whose growth was inhibited by the same drug in the in vitro experiment.</p>
+<p>Supplementary Tables 1 to 4 include information on the cohort characteristics and drug intake with source metadata. Source metadata for the MetaCardis cohort includes disease group, gender, age, study center, body mass index (BMI, kg/m2), alternative healthy eating index (aHEI), diet diversity score (DDS), and dietary approaches to stop hypertension (DASH), physical activity and manual work levels, and smoking status. Source data includes information on the drug intake, drug combinations, dosage and antibiotic use analyzed in the MetaCardis cohort.</p>
 <ul>
 <li>Supplementary_Table_8_2019-09-13434.xlsx</li>
 </ul>
 <p>Supplementary Table 8: Features of microbiome, host and metabolome impacted by different drug combinations. Analysis of the effect of drug combinations, assessed for impact on host and microbiome falling within different measurement categories in each patient group.</p>
 <ul>
-<li>Supplementary_Table_10_2019-09-13434.xlsx</li>
+<li>example_feature_table.csv</li>
 </ul>
-<p>Supplementary Table 10. Mediation analysis of host and microbiome features for drug intake, dosage and combinations. Mediation analysis via a regression model of drug effect on each host feature mediated through a microbiome feature or vice versa.</p>
-<p>Figure is based on the data from Supplementary Tables 6, 8 and 10.</p>
+<p>File with source data on host and microbiome feature values per sample.</p>
+<ul>
+<li>hub.pheno.v8.data.frame.r</li>
+</ul>
+<p>File with source data on phenotype features in each sample.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load required libraries</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load necessary libraries</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats.mediation</span> <span class="kn">import</span> <span class="n">Mediation</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 </pre></div>
 
     </div>
@@ -13125,55 +13130,28 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[113]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read combination feature mediation file</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prepare file names to download: phenotype, drug and feature information</span>
 <span class="n">fileFolder</span> <span class="o">=</span> <span class="s1">&#39;./input_data/&#39;</span>
-<span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Table_10_2019-09-13434.xlsx&#39;</span>
-<span class="n">sheetName</span> <span class="o">=</span> <span class="s1">&#39;Drug combinations&#39;</span>
 
-<span class="n">mediation_df_filtered_combined_filtered</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">,</span>
-                           <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetName</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Get feature infromation for drug and drug combination associations for further filtering</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read single drug features files</span>
-<span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Table_6_2019-09-13434.xlsx&#39;</span>
-<span class="n">sheetName</span> <span class="o">=</span> <span class="s1">&#39;Drug group effect&#39;</span>
-<span class="n">drugEffect</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">,</span>
-                           <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetName</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read drug combination features files</span>
+<span class="n">hubfilePhenotype</span> <span class="o">=</span> <span class="s1">&#39;hub.pheno.v8.data.frame.r&#39;</span>
+<span class="n">featureFile</span> <span class="o">=</span> <span class="s1">&#39;example_feature_table.csv&#39;</span>
+<span class="n">hubfileDrugDosage</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Tables_1_to_4_2019-09-13434.xlsx&#39;</span>
+<span class="n">sheetDrug</span> <span class="o">=</span> <span class="s1">&#39;ST 2b&#39;</span>
+<span class="c1"># supplementary table 8 to filter features affected by drug combinations</span>
 <span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Table_8_2019-09-13434.xlsx&#39;</span>
+
+<span class="c1"># read file names with features</span>
+<span class="n">features_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">featureFile</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># read phenotype and drug files</span>
+<span class="n">featuresPheno</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">hubfilePhenotype</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">featuresDrug</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">hubfileDrugDosage</span><span class="p">,</span> 
+                           <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetDrug</span><span class="p">)</span>
+<span class="c1"># read drug combination features files</span>
 <span class="n">sheetName</span> <span class="o">=</span> <span class="s1">&#39;Data&#39;</span>
 <span class="n">drugCombinationEffect</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">,</span>
                            <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetName</span><span class="p">)</span>
@@ -13186,11 +13164,14 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[116]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># concatenate single drug effects and combination effects</span>
-<span class="n">allEffects_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">drugCombinationEffect</span><span class="p">,</span> <span class="n">drugEffect</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create dataframe with sample - group</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresPheno</span><span class="p">[[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;Group&#39;</span><span class="p">]]</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">##################################################################</span>
 </pre></div>
 
     </div>
@@ -13200,453 +13181,149 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[117]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># get the patient groups (Sample set column)</span>
-<span class="n">listconditions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]))</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#######################################</span>
+<span class="c1"># select drug combinations and condition for which to perform analysis</span>
+<span class="n">drug_pairs</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;STATINE_C&#39;</span><span class="p">,</span> <span class="s1">&#39;METFORMIN_C&#39;</span><span class="p">],</span>
+              <span class="p">[</span><span class="s1">&#39;STATINE_C&#39;</span><span class="p">,</span> <span class="s1">&#39;ASA_C&#39;</span><span class="p">],</span>
+              <span class="p">[</span><span class="s1">&#39;STATINE_C&#39;</span><span class="p">,</span> <span class="s1">&#39;CA2_CBL_C&#39;</span><span class="p">]]</span>
 
-    </div>
-</div>
-</div>
+<span class="n">drug_pairs_names</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Statin&#39;</span><span class="p">,</span> <span class="s1">&#39;Metformin&#39;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s1">&#39;Statin&#39;</span><span class="p">,</span> <span class="s1">&#39;Aspirin&#39;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s1">&#39;Statin&#39;</span><span class="p">,</span> <span class="s1">&#39;Calcium antagonist&#39;</span><span class="p">]]</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For each mediation pair, get effect sizes of drugs and combinations and diseases</p>
+<span class="n">cursampleset</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span> <span class="c1">#T2D group</span>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_set_idx</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># select Group T2D (3)</span>
-<span class="n">curset</span> <span class="o">=</span> <span class="n">listconditions</span><span class="p">[</span><span class="n">sample_set_idx</span><span class="p">]</span>
-<span class="c1"># copy all effects for one condition to reduce number</span>
-<span class="n">selectedEffectd_df</span> <span class="o">=</span> <span class="n">allEffects_df</span><span class="p">[(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">curset</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)]</span>
-</pre></div>
+<span class="c1"># perform mediation analysis for each drug pair</span>
+<span class="n">feat_names1</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">feat_names2</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">featcorr_DrugFeat</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">featcorrP_DrugFeat</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">featcorr_1_2</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">featcorrP_1_2</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">feat_medres</span> <span class="o">=</span> <span class="p">[]</span> 
+<span class="n">feat_drugcombo</span> <span class="o">=</span> <span class="p">[]</span>
 
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select only features with congruence opposite of disease (drug and disease effects are opposite)</span>
-<span class="n">selectedEffectd_df</span> <span class="o">=</span> <span class="n">selectedEffectd_df</span><span class="p">[</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Congruence&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;Opposite&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create a dataframe containing information on the potential features and mediators</span>
-<span class="n">mediation_df_filtered_combined_filtered_features</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered</span><span class="p">)):</span>
-    <span class="n">curfeature1</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">curfeature2</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">curspace1</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered</span><span class="p">[</span><span class="s1">&#39;FeatureSpace1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">curspace2</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered</span><span class="p">[</span><span class="s1">&#39;FeatureSpace2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">cureffector</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Combination: &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector_drugs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
-
-    <span class="n">cureffect_df</span> <span class="o">=</span> <span class="n">selectedEffectd_df</span><span class="p">[</span>
-                <span class="p">(((</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curfeature1</span><span class="p">)</span> <span class="o">&amp;</span>
-                  <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature space&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curspace1</span><span class="p">))</span> <span class="o">|</span>
-                 <span class="p">((</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curfeature2</span><span class="p">)</span> <span class="o">&amp;</span>
-                  <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature space&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curspace2</span><span class="p">)))</span><span class="o">&amp;</span>
-                <span class="p">((</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;Group contrast&#39;</span><span class="p">)</span> <span class="o">|</span>
-                 <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">cureffector</span><span class="p">)</span> <span class="o">|</span>
-                 <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span>
-                 <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">1</span><span class="p">]))]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-        <span class="n">mediation_df_filtered_combined_filtered_features</span> <span class="o">=</span> <span class="n">cureffect_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">mediation_df_filtered_combined_filtered_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
-            <span class="n">mediation_df_filtered_combined_filtered_features</span><span class="p">,</span> <span class="n">cureffect_df</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[121]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
-    <span class="n">mediation_df_filtered_combined_filtered</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Select statin, metformin, aspirin and calcium antagonists to extract the mediation graph.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[122]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ploteffectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[123]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ploteffectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ploteffectors</span> 
-                 <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;Statin&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s1">&#39;Metformin&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">))</span> <span class="o">|</span>
-                    <span class="p">((</span><span class="s1">&#39;Statin&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s1">&#39;Aspirin&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">))</span> <span class="o">|</span>
-                    <span class="p">((</span><span class="s1">&#39;Statin&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s1">&#39;Calcium&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">))]</span>
-<span class="n">ploteffectors</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[123]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&#39;Combination: Statin intake, Aspirine intake&#39;,
- &#39;Combination: Metformin intake, Statin intake&#39;,
- &#39;Combination: Calcium antagonist intake, Statin intake&#39;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Filter mediation results by effectors and patient type</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[124]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span>
-    <span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">ploteffectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span>
-    <span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">ploteffectors</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">|</span>
-    <span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">ploteffectors</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[125]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">feature_set</span> <span class="o">=</span> <span class="s1">&#39;T2D (3)&#39;</span>
-<span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span>
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">feature_set</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[126]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span>
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;ACME (average)_P-value&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="mf">0.1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Select feature pairs that are present in drug combo or single drugs feature matrices</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[127]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newcolumn_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Feature1_drug1&#39;</span><span class="p">,</span><span class="s1">&#39;Feature1_drug2&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Feature1_drug1effect&#39;</span><span class="p">,</span><span class="s1">&#39;Feature1_drug2effect&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Feature1_drugcombo&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Feature2_drug1&#39;</span><span class="p">,</span><span class="s1">&#39;Feature2_drug2&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Feature2_drug1effect&#39;</span><span class="p">,</span><span class="s1">&#39;Feature2_drug2effect&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;Feature2_drugcombo&#39;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">newcolumn_names</span><span class="p">:</span>
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-        <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">),</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[128]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prepare a subset of features to record effect of each drug on each feature</span>
-<span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
-    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[129]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># populate the dataframe with information on which drugs are associated with each feature</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">)):</span>
-    <span class="n">curfeatures</span> <span class="o">=</span> <span class="p">[</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                   <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-    <span class="n">curspaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;FeatureSpace1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                   <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;FeatureSpace2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-    <span class="n">cureffector</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Combination: &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector_drugs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">curfeat_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">curfeatures</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">curdrug_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">)):</span>
-                <span class="n">cureffect_df</span> <span class="o">=</span> <span class="n">selectedEffectd_df</span><span class="p">[</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curfeatures</span><span class="p">[</span><span class="n">curfeat_i</span><span class="p">])</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature space&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curspaces</span><span class="p">[</span><span class="n">curfeat_i</span><span class="p">])</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="n">curdrug_i</span><span class="p">])]</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cureffect_df</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span>
-                        <span class="s1">&#39;Feature&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">curfeat_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_drug&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">curdrug_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> \
-                    <span class="n">cureffector_drugs</span><span class="p">[</span><span class="n">curdrug_i</span><span class="p">]</span>
-                    <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span>
-                        <span class="s1">&#39;Feature&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">curfeat_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_drug&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">curdrug_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="n">cureffect_df</span><span class="p">[</span><span class="s1">&#39;Effect size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">cureffect_df</span> <span class="o">=</span> <span class="n">selectedEffectd_df</span><span class="p">[</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curfeatures</span><span class="p">[</span><span class="n">curfeat_i</span><span class="p">])</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Feature space&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">curspaces</span><span class="p">[</span><span class="n">curfeat_i</span><span class="p">])</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>
-                    <span class="p">(</span><span class="n">selectedEffectd_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cureffect_df</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span>
-                    <span class="s1">&#39;Feature&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">curfeat_i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_drugcombo&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                <span class="n">cureffect_df</span><span class="p">[</span><span class="s1">&#39;Effect size&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[130]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># for plotting, select only mediated features that are both affected by the drug combination</span>
-<span class="n">plotdata_both</span> <span class="o">=</span> <span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span>
-   <span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Feature1_drugcombo&#39;</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>
-   <span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Feature2_drugcombo&#39;</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[131]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select only features that pass correlation p-value threshold of 0.1</span>
-<span class="n">plotdata_both_corr</span> <span class="o">=</span> <span class="n">plotdata_both</span><span class="p">[</span><span class="n">plotdata_both</span><span class="p">[</span><span class="s1">&#39;FeatureFeatureCorrP&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="mf">0.1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Save mediator features to graph</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[132]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata_both_corr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[133]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># represent the data as graph nodes (drugs and features)</span>
-<span class="c1"># connected by edges (effect sizes and correlations)</span>
-<span class="n">graphnodes</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">graphsources</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">graphedges</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">graphedgesP</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">nodesnames</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">nodestypes</span><span class="o">=</span><span class="p">[]</span>
-<span class="n">edgetype</span><span class="o">=</span><span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plotdata</span><span class="p">)):</span>
-    <span class="n">cureffector</span> <span class="o">=</span> <span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Combination: &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">cureffector_drugs</span> <span class="o">=</span> <span class="n">cureffector_drugs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">drug_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">drug_pairs</span><span class="p">)):</span>
+    <span class="n">drug_name1</span> <span class="o">=</span> <span class="n">drug_pairs</span><span class="p">[</span><span class="n">drug_i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">drug_name2</span> <span class="o">=</span> <span class="n">drug_pairs</span><span class="p">[</span><span class="n">drug_i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
     
-    <span class="c1"># feature 1 drug 1</span>
-    <span class="n">graphnodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">graphsources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1_drugcombo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">edgetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;drug_feat&#39;</span><span class="p">)</span>
-    <span class="c1"># feature 1 drug 2</span>
-    <span class="n">graphnodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">graphsources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1_drugcombo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">edgetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;drug_feat&#39;</span><span class="p">)</span>
-    <span class="c1"># feature 2 drug 1</span>
-    <span class="n">graphnodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">graphsources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_drugcombo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">edgetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;drug_feat&#39;</span><span class="p">)</span>
-    <span class="c1"># feature 2 drug 2</span>
-    <span class="n">graphnodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">graphsources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_drugcombo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">edgetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;drug_feat&#39;</span><span class="p">)</span>
-    <span class="c1"># feature 1 feature 2</span>
-    <span class="n">graphnodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphsources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;FeatureFeatureCorr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">graphedgesP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;FeatureFeatureCorrP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">edgetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;feat_feat&#39;</span><span class="p">)</span>
-    <span class="c1"># nodes info</span>
-    <span class="n">nodesnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">nodestypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Feature&#39;</span><span class="p">)</span>
-    <span class="n">nodesnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plotdata</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">nodestypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Feature&#39;</span><span class="p">)</span>
-    <span class="n">nodesnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">nodestypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Drug&#39;</span><span class="p">)</span>
-    <span class="n">nodesnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cureffector_drugs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">nodestypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Drug&#39;</span><span class="p">)</span>
-</pre></div>
+    <span class="c1"># extract dataframe for current drug </span>
+    <span class="n">drug_df</span> <span class="o">=</span> <span class="n">featuresDrug</span><span class="p">[[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">featuresDrug</span><span class="o">.</span><span class="n">columns</span> 
+                              <span class="k">if</span> <span class="p">(</span><span class="n">drug_name1</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)</span> <span class="o">|</span>
+                                 <span class="p">(</span><span class="n">drug_name2</span> <span class="ow">in</span> <span class="n">item</span><span class="p">)]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">drug_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">featuresDrug</span><span class="p">[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">]</span>
+    <span class="c1"># column Drug contains combination</span>
+    <span class="n">drug_df</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># overlap with phenotype </span>
+    <span class="n">drug_df</span> <span class="o">=</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">featuresGroup</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">drug_df</span><span class="p">[</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">drug_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span>
+    
+    <span class="c1">#############################</span>
+    <span class="c1"># get feature names that are changing in this combination</span>
+    <span class="n">associated_features</span> <span class="o">=</span> <span class="n">drugCombinationEffect</span><span class="p">[(</span><span class="n">drugCombinationEffect</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">drug_pairs_names</span><span class="p">[</span><span class="n">drug_i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>
+                                                <span class="p">(</span><span class="n">drugCombinationEffect</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">drug_pairs_names</span><span class="p">[</span><span class="n">drug_i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>
+                                                <span class="p">(</span><span class="n">drugCombinationEffect</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">cursampleset</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">selected_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">associated_features</span><span class="p">[</span><span class="s1">&#39;Feature display name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">features_df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+    <span class="c1">#############################</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running mediation analysis for combination &#39;</span><span class="p">,</span> <span class="n">drug_name1</span><span class="p">,</span> <span class="s1">&#39; and &#39;</span><span class="p">,</span> <span class="n">drug_name2</span><span class="p">,</span> <span class="s1">&#39; in &#39;</span><span class="p">,</span> <span class="n">cursampleset</span><span class="p">)</span>
+    
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_features</span><span class="p">)):</span>
+        <span class="n">feat1name</span> <span class="o">=</span> <span class="n">selected_features</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_features</span><span class="p">)):</span>
+            
+            <span class="n">feat2name</span> <span class="o">=</span> <span class="n">selected_features</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Performing mediation analysis for &#39;</span><span class="p">,</span> <span class="n">feat1name</span><span class="p">,</span> <span class="s1">&#39; and &#39;</span><span class="p">,</span> <span class="n">feat2name</span><span class="p">)</span>
+            <span class="c1"># add features to drug df</span>
+            <span class="n">drugmediation_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">drug_df</span><span class="p">,</span> <span class="n">features_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="n">feat1name</span><span class="p">,</span><span class="n">feat2name</span><span class="p">]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># select only patients from one group</span>
+            <span class="n">testdata</span> <span class="o">=</span> <span class="n">drugmediation_df</span><span class="p">[</span><span class="n">drugmediation_df</span><span class="p">[</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">cursampleset</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c1"># reaplce nans with 0</span>
+            <span class="n">testdata</span> <span class="o">=</span> <span class="n">testdata</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># doublecheck that feature values are numeric</span>
+            <span class="n">testdata</span><span class="p">[</span><span class="n">feat1name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="n">feat1name</span><span class="p">])</span>
+            <span class="n">testdata</span><span class="p">[</span><span class="n">feat2name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="n">feat2name</span><span class="p">])</span>
+            
+            <span class="c1">#rename columns to generic for easier formula definition for mediation analysis</span>
+            <span class="n">testdata</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">feat1name</span><span class="p">,</span> <span class="s1">&#39;FeatureValue_1&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">testdata</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">testdata</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">feat2name</span><span class="p">,</span> <span class="s1">&#39;FeatureValue_2&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">testdata</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            
+            <span class="c1"># change drug from boolean to 0 and 1</span>
+            <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">testdata</span><span class="p">))]</span>
+            <span class="c1"># model feature 1 as mediator</span>
+            <span class="n">outcome_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s2">&quot;FeatureValue_1 ~ Drug + FeatureValue_2&quot;</span><span class="p">,</span>
+                                                <span class="n">data</span> <span class="o">=</span> <span class="n">testdata</span><span class="p">)</span>
+            <span class="n">mediator_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s2">&quot;FeatureValue_2 ~ Drug&quot;</span><span class="p">,</span>
+                                                  <span class="n">data</span> <span class="o">=</span> <span class="n">testdata</span><span class="p">)</span>
+    
+            <span class="n">med</span> <span class="o">=</span> <span class="n">Mediation</span><span class="p">(</span><span class="n">outcome_model</span><span class="p">,</span> <span class="n">mediator_model</span><span class="p">,</span> <span class="s2">&quot;Drug&quot;</span><span class="p">,</span> <span class="s2">&quot;FeatureValue_2&quot;</span><span class="p">)</span>
+    
+            <span class="n">med_result</span> <span class="o">=</span> <span class="n">med</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">n_rep</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">med_result</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+            <span class="c1"># save results</span>
+            <span class="n">feat_names1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat1name</span><span class="p">)</span>
+            <span class="n">feat_names2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat2name</span><span class="p">)</span>
+            <span class="n">feat_medres</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> 
+            <span class="c1">#model feature 2 as mediator</span>
+            <span class="n">outcome_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s2">&quot;FeatureValue_2 ~ Drug + FeatureValue_1&quot;</span><span class="p">,</span>
+                                        <span class="n">data</span> <span class="o">=</span> <span class="n">testdata</span><span class="p">)</span>
+            <span class="n">mediator_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s2">&quot;FeatureValue_1 ~ Drug&quot;</span><span class="p">,</span>
+                                                  <span class="n">data</span> <span class="o">=</span> <span class="n">testdata</span><span class="p">)</span>
+    
+            <span class="n">med</span> <span class="o">=</span> <span class="n">Mediation</span><span class="p">(</span><span class="n">outcome_model</span><span class="p">,</span> <span class="n">mediator_model</span><span class="p">,</span> <span class="s2">&quot;Drug&quot;</span><span class="p">,</span> <span class="s2">&quot;FeatureValue_1&quot;</span><span class="p">)</span>
+    
+            <span class="n">med_result</span> <span class="o">=</span> <span class="n">med</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">n_rep</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">med_result</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+            <span class="c1"># save results</span>
+            <span class="n">feat_names1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat2name</span><span class="p">)</span>
+            <span class="n">feat_names2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat1name</span><span class="p">)</span>
+            <span class="n">feat_medres</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> 
+    
+            <span class="c1"># calculate correlations</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">],</span> <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_1&#39;</span><span class="p">])</span>
+            <span class="n">featcorr_DrugFeat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">featcorrP_DrugFeat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+            <span class="n">res</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">],</span> <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_2&#39;</span><span class="p">])</span>
+            <span class="n">featcorr_DrugFeat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">featcorrP_DrugFeat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+            <span class="n">res</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_1&#39;</span><span class="p">],</span> <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_2&#39;</span><span class="p">])</span>
+            <span class="n">featcorr_1_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">featcorrP_1_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    
+            <span class="n">res</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_2&#39;</span><span class="p">],</span> <span class="n">testdata</span><span class="p">[</span><span class="s1">&#39;FeatureValue_1&#39;</span><span class="p">])</span>
+            <span class="n">featcorr_1_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">featcorrP_1_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="n">feat_drugcombo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Combination: &#39;</span> <span class="o">+</span> <span class="n">drug_name1</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="n">drug_name2</span><span class="p">)</span>
+            <span class="n">feat_drugcombo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Combination: &#39;</span> <span class="o">+</span> <span class="n">drug_name1</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="n">drug_name2</span><span class="p">)</span>
 
-    </div>
-</div>
-</div>
+<span class="c1"># compile dataframe with mediation results</span>
+<span class="n">medres_df</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">feat_medres</span><span class="p">)):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">feat_medres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">df</span><span class="p">)[</span><span class="mi">0</span><span class="p">])),</span>
+                  <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">medres_df</span> <span class="o">=</span> <span class="n">df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">medres_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">medres_df</span><span class="p">,</span> <span class="n">df</span><span class="p">])</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[134]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># make a dataframe of the graph nodes</span>
-<span class="n">graph_df</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Node1&#39;</span><span class="p">:</span> <span class="n">graphnodes</span><span class="p">,</span>
-            <span class="s1">&#39;Node2&#39;</span><span class="p">:</span> <span class="n">graphsources</span><span class="p">,</span>
-            <span class="s1">&#39;EdgeValue&#39;</span><span class="p">:</span> <span class="n">graphedges</span><span class="p">,</span>
-            <span class="s1">&#39;EdgeType&#39;</span><span class="p">:</span> <span class="n">edgetype</span><span class="p">}</span>
-
-<span class="n">graph_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">graph_df</span><span class="p">)</span>
-
-<span class="n">graph_df</span> <span class="o">=</span> <span class="n">graph_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[135]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">graph_df</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;Feature1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">feat_names1</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;Feature2_med&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">feat_names2</span>
+        
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;FeatureDrugCorr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featcorr_DrugFeat</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;FeatureDrugCorrP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featcorrP_DrugFeat</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;FeatureFeatureCorr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featcorr_1_2</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;FeatureFeatureCorrP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featcorrP_1_2</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">feat_drugcombo</span>
+<span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cursampleset</span>
 </pre></div>
 
     </div>
@@ -13659,11 +13336,104 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[135]:</div>
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Running mediation analysis for combination  STATINE_C  and  METFORMIN_C  in  3
+Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Toluene degradation, toluene =&gt; benzoate (M00538)
+Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Fat mass in %
+Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
+Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  Fat mass in %
+Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  Fat mass in %
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
+Performing mediation analysis for  Fat mass in %  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
+Running mediation analysis for combination  STATINE_C  and  ASA_C  in  3
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  IDL Apo-B mg/dL
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  observed species richness
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  Fat mass in %
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  IDL Apo-B mg/dL  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  IDL Apo-B mg/dL  and  observed species richness
+Performing mediation analysis for  IDL Apo-B mg/dL  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  IDL Apo-B mg/dL  and  Fat mass in %
+Performing mediation analysis for  IDL Apo-B mg/dL  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  observed species richness
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  Fat mass in %
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  observed species richness  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  observed species richness  and  Fat mass in %
+Performing mediation analysis for  observed species richness  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  unclassified Oscillibacter (CAG00961)  and  Fat mass in %
+Performing mediation analysis for  unclassified Oscillibacter (CAG00961)  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  Fat mass in %  and  VLDL-3 Cholesterol mg/dL
+Running mediation analysis for combination  STATINE_C  and  CA2_CBL_C  in  3
+Performing mediation analysis for  Alistipes sp. (motu_linkage_group_621)  and  VLDL Cholesterol mg/dL
+Performing mediation analysis for  Alistipes sp. (motu_linkage_group_621)  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholesterol mg/dL
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">###############################</span>
+<span class="c1"># select a subset of columns to print to file</span>
+<span class="n">medres_df</span> <span class="o">=</span> <span class="n">medres_df</span><span class="p">[[</span><span class="s1">&#39;Effector&#39;</span><span class="p">,</span>                  <span class="c1"># drug combination pair</span>
+                       <span class="s1">&#39;Sample set&#39;</span><span class="p">,</span>                <span class="c1"># patient group</span>
+                       <span class="s1">&#39;Feature1&#39;</span><span class="p">,</span> <span class="s1">&#39;Feature2_med&#39;</span><span class="p">,</span>  <span class="c1"># Feature (1) and mediator (2)</span>
+                       <span class="s1">&#39;ACME (average)_Estimate&#39;</span><span class="p">,</span>   <span class="c1"># Average estimate of mediated effect</span>
+                       <span class="s1">&#39;ADE (average)_Estimate&#39;</span><span class="p">,</span>    <span class="c1"># Average estimate of direct drug effect</span>
+                       <span class="s1">&#39;Total effect_Estimate&#39;</span><span class="p">,</span>     <span class="c1"># Estimate of total effect</span>
+                       <span class="s1">&#39;ACME (average)_P-value&#39;</span><span class="p">,</span>    <span class="c1"># P-value of mediated effect</span>
+                       <span class="s1">&#39;ADE (average)_P-value&#39;</span><span class="p">,</span>     <span class="c1"># P-value of direct drug effect</span>
+                       <span class="s1">&#39;Total effect_P-value&#39;</span><span class="p">,</span>      <span class="c1"># P-value of total effect</span>
+                       <span class="s1">&#39;FeatureDrugCorr&#39;</span><span class="p">,</span> <span class="s1">&#39;FeatureDrugCorrP&#39;</span><span class="p">,</span>   <span class="c1"># Pearson corr and p-value between drug and Feature 1</span>
+                       <span class="s1">&#39;FeatureFeatureCorr&#39;</span><span class="p">,</span> <span class="s1">&#39;FeatureFeatureCorrP&#39;</span><span class="p">]]</span> <span class="c1">#Pearson corr and p-value between Feature 1 and Feature 2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># display mediation analysis results</span>
+<span class="n">display</span><span class="p">(</span><span class="n">medres_df</span><span class="p">[</span><span class="n">medres_df</span><span class="p">[</span><span class="s1">&#39;ACME (average)_P-value&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="mf">0.1</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
+<div class="output_html rendered_html output_subarea ">
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -13682,472 +13452,634 @@ div#notebook {
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Node1</th>
-      <th>Node2</th>
-      <th>EdgeValue</th>
-      <th>EdgeType</th>
+      <th>Effector</th>
+      <th>Sample set</th>
+      <th>Feature1</th>
+      <th>Feature2_med</th>
+      <th>ACME (average)_Estimate</th>
+      <th>ADE (average)_Estimate</th>
+      <th>Total effect_Estimate</th>
+      <th>ACME (average)_P-value</th>
+      <th>ADE (average)_P-value</th>
+      <th>Total effect_P-value</th>
+      <th>FeatureDrugCorr</th>
+      <th>FeatureDrugCorrP</th>
+      <th>FeatureFeatureCorr</th>
+      <th>FeatureFeatureCorrP</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Calcium antagonist intake</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>0.161954</td>
-      <td>drug_feat</td>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>2.213171e-01</td>
+      <td>3.257009e+00</td>
+      <td>3.478326e+00</td>
+      <td>0.10</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.122870</td>
+      <td>0.003774</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>Statin intake</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>0.161954</td>
-      <td>drug_feat</td>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>7.994857e-01</td>
+      <td>5.497242e+00</td>
+      <td>6.296728e+00</td>
+      <td>0.08</td>
+      <td>0.10</td>
+      <td>0.10</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>Calcium antagonist intake</td>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>3.047680e-01</td>
+      <td>3.217209e+00</td>
+      <td>3.521977e+00</td>
+      <td>0.08</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.122870</td>
+      <td>0.003774</td>
+      <td>-0.079177</td>
+      <td>6.255946e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>-8.581724e-02</td>
+      <td>-9.470994e-01</td>
+      <td>-1.032917e+00</td>
+      <td>0.06</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>-0.128331</td>
+      <td>0.002476</td>
+      <td>-0.079177</td>
+      <td>6.255946e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>-2.370408e-01</td>
+      <td>-2.169776e+00</td>
+      <td>-2.406817e+00</td>
+      <td>0.04</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>-0.168866</td>
+      <td>0.000065</td>
+      <td>-0.065193</td>
+      <td>1.253709e-01</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>9.580047e-01</td>
+      <td>4.782322e+00</td>
+      <td>5.740326e+00</td>
+      <td>0.00</td>
+      <td>0.16</td>
+      <td>0.08</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>7.986219e-01</td>
+      <td>5.312680e+00</td>
+      <td>6.111302e+00</td>
+      <td>0.08</td>
+      <td>0.10</td>
+      <td>0.06</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>-6.141057e-02</td>
+      <td>-9.699484e-01</td>
+      <td>-1.031359e+00</td>
+      <td>0.10</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>-0.128331</td>
+      <td>0.002476</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>6.787217e+00</td>
+      <td>-1.123190e-14</td>
+      <td>6.787217e+00</td>
+      <td>0.06</td>
+      <td>0.00</td>
+      <td>0.06</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>1.000000</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>Fat mass in %</td>
+      <td>-7.538589e-02</td>
+      <td>-9.711528e-01</td>
+      <td>-1.046539e+00</td>
+      <td>0.08</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>-0.128331</td>
+      <td>0.002476</td>
+      <td>0.170003</td>
+      <td>5.778911e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>-2.547528e-01</td>
+      <td>-2.078203e+00</td>
+      <td>-2.332956e+00</td>
+      <td>0.10</td>
+      <td>0.06</td>
+      <td>0.04</td>
+      <td>-0.168866</td>
+      <td>0.000065</td>
+      <td>0.170003</td>
+      <td>5.778911e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>8.779179e-01</td>
+      <td>5.299366e+00</td>
+      <td>6.177284e+00</td>
+      <td>0.08</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>observed species richness</td>
+      <td>1.071072e+01</td>
+      <td>5.031797e+01</td>
+      <td>6.102869e+01</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.155559</td>
+      <td>0.000237</td>
+      <td>0.510726</td>
+      <td>3.909109e-38</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>observed species richness</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>5.579729e+00</td>
+      <td>9.912977e+00</td>
+      <td>1.549271e+01</td>
+      <td>0.00</td>
+      <td>0.06</td>
+      <td>0.02</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>0.510726</td>
+      <td>3.909109e-38</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>6.796470e+00</td>
+      <td>5.537452e+01</td>
+      <td>6.217099e+01</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.155559</td>
+      <td>0.000237</td>
+      <td>0.365748</td>
+      <td>5.612626e-19</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>1.667057e+00</td>
+      <td>5.971316e+00</td>
+      <td>7.638373e+00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.158203</td>
+      <td>0.000185</td>
+      <td>0.365748</td>
+      <td>5.612626e-19</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>-8.622815e-01</td>
+      <td>-6.381434e-02</td>
+      <td>-9.260958e-01</td>
+      <td>0.00</td>
+      <td>0.64</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.922800</td>
+      <td>8.198169e-231</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-2.231615e+00</td>
+      <td>-1.317818e-01</td>
+      <td>-2.363396e+00</td>
+      <td>0.00</td>
+      <td>0.70</td>
+      <td>0.00</td>
+      <td>-0.175098</td>
+      <td>0.000034</td>
+      <td>0.922800</td>
+      <td>8.198169e-231</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>observed species richness</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>1.872683e+00</td>
+      <td>1.464716e+01</td>
+      <td>1.651984e+01</td>
+      <td>0.06</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>-0.093991</td>
+      <td>2.695347e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>Fat mass in %</td>
+      <td>-7.850538e-02</td>
+      <td>-8.913002e-01</td>
+      <td>-9.698056e-01</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.183670</td>
+      <td>1.359000e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-6.052970e-01</td>
+      <td>-4.823743e+00</td>
+      <td>-5.429040e+00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.181373</td>
+      <td>0.000017</td>
+      <td>0.183670</td>
+      <td>1.359000e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-0.176885</td>
-      <td>drug_feat</td>
+      <td>-4.149293e-01</td>
+      <td>-5.308434e-01</td>
+      <td>-9.457727e-01</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.613403</td>
+      <td>1.452435e-58</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>Statin intake</td>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-0.176885</td>
-      <td>drug_feat</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-9.024739e-01</td>
+      <td>-4.907066e-02</td>
+      <td>-9.515446e-01</td>
+      <td>0.00</td>
+      <td>0.92</td>
+      <td>0.00</td>
+      <td>-0.118752</td>
+      <td>0.005131</td>
+      <td>0.613403</td>
+      <td>1.452435e-58</td>
     </tr>
     <tr>
-      <th>4</th>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>observed species richness</td>
+      <td>-1.281574e-01</td>
+      <td>-2.138696e+00</td>
+      <td>-2.266853e+00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.175098</td>
+      <td>0.000034</td>
+      <td>-0.094625</td>
+      <td>2.593589e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>observed species richness</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>1.846366e+00</td>
+      <td>1.488115e+01</td>
+      <td>1.672752e+01</td>
+      <td>0.04</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>-0.094625</td>
+      <td>2.593589e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>-5.337777e-01</td>
+      <td>-5.027523e+00</td>
+      <td>-5.561301e+00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.181373</td>
+      <td>0.000017</td>
+      <td>0.170003</td>
+      <td>5.778911e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>-1.242323e+00</td>
+      <td>-1.018107e+00</td>
+      <td>-2.260430e+00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.175098</td>
+      <td>0.000034</td>
+      <td>0.753112</td>
+      <td>1.882644e-102</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>-1.103751e+00</td>
+      <td>1.802580e-01</td>
+      <td>-9.234933e-01</td>
+      <td>0.00</td>
+      <td>0.42</td>
+      <td>0.00</td>
+      <td>-0.118752</td>
+      <td>0.005131</td>
+      <td>0.753112</td>
+      <td>1.882644e-102</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>observed species richness</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>2.603756e+00</td>
+      <td>1.318794e+01</td>
+      <td>1.579170e+01</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>0.488774</td>
+      <td>1.309544e-34</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>observed species richness</td>
+      <td>1.116793e+00</td>
+      <td>6.547467e+00</td>
+      <td>7.664261e+00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.158203</td>
+      <td>0.000185</td>
+      <td>0.488774</td>
+      <td>1.309544e-34</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>Fat mass in %</td>
+      <td>7.816655e-01</td>
+      <td>6.706836e+00</td>
+      <td>7.488502e+00</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.158203</td>
+      <td>0.000185</td>
+      <td>-0.141452</td>
+      <td>8.418135e-04</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>-4.124701e-01</td>
+      <td>-5.041563e+00</td>
+      <td>-5.454033e+00</td>
+      <td>0.04</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>-0.181373</td>
+      <td>0.000017</td>
+      <td>-0.141452</td>
+      <td>8.418135e-04</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
       <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-0.073258</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>-0.073258</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>Calcium antagonist intake</td>
       <td>VLDL Cholesterol mg/dL</td>
-      <td>-0.179195</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Statin intake</td>
-      <td>VLDL Cholesterol mg/dL</td>
-      <td>-0.179195</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>VLDL Cholesterol mg/dL</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
+      <td>4.305882e+07</td>
+      <td>4.927297e+08</td>
+      <td>5.357886e+08</td>
+      <td>0.06</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.142117</td>
+      <td>0.000795</td>
       <td>-0.069984</td>
-      <td>feat_feat</td>
+      <td>9.985967e-02</td>
     </tr>
-    <tr>
-      <th>15</th>
-      <td>Metformin intake</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>0.151456</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>Statin intake</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>0.151456</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Metformin intake</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.177343</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>Statin intake</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.177343</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.079177</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>-0.079177</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>Metformin intake</td>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>0.163755</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>Statin intake</td>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>0.163755</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.087335</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>34</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>-0.087335</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>Metformin intake</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>0.163755</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>36</th>
-      <td>Statin intake</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>0.163755</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>39</th>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.087335</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>44</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>-0.087335</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>Statin intake</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.313802</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>46</th>
-      <td>Aspirine intake</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.313802</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>47</th>
-      <td>Statin intake</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>0.291080</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>48</th>
-      <td>Aspirine intake</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>0.291080</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>49</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>-0.090746</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>50</th>
-      <td>Statin intake</td>
-      <td>observed species richness</td>
-      <td>0.227687</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>51</th>
-      <td>Aspirine intake</td>
-      <td>observed species richness</td>
-      <td>0.227687</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>52</th>
-      <td>Statin intake</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-0.296421</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>53</th>
-      <td>Aspirine intake</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-0.296421</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>54</th>
-      <td>observed species richness</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-0.093991</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>59</th>
-      <td>IDL Apo-B mg/dL</td>
-      <td>observed species richness</td>
-      <td>-0.093991</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>64</th>
-      <td>observed species richness</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-0.094625</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>69</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>observed species richness</td>
-      <td>-0.094625</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>70</th>
-      <td>Statin intake</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>0.211984</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>71</th>
-      <td>Aspirine intake</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>0.211984</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>72</th>
-      <td>Statin intake</td>
-      <td>Fat mass in %</td>
-      <td>-0.344896</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>73</th>
-      <td>Aspirine intake</td>
-      <td>Fat mass in %</td>
-      <td>-0.344896</td>
-      <td>drug_feat</td>
-    </tr>
-    <tr>
-      <th>74</th>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>Fat mass in %</td>
-      <td>-0.141452</td>
-      <td>feat_feat</td>
-    </tr>
-    <tr>
-      <th>79</th>
-      <td>Fat mass in %</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>-0.141452</td>
-      <td>feat_feat</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[136]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># UNCOMMENT TO PRINT GRAPH EDGES TO FILE</span>
-<span class="c1">#graph_df.to_csv(&#39;fig2e_mediation_graph_edges.tsv&#39;, sep=&#39;\t&#39;)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[137]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># make a dataframe of node types</span>
-<span class="n">nodetype_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Node&#39;</span><span class="p">:</span> <span class="n">nodesnames</span><span class="p">,</span> <span class="s1">&#39;Type&#39;</span><span class="p">:</span> <span class="n">nodestypes</span><span class="p">})</span>
-<span class="n">nodetype_df</span> <span class="o">=</span> <span class="n">nodetype_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[138]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nodetype_df</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[138]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Node</th>
-      <th>Type</th>
-    </tr>
-  </thead>
-  <tbody>
     <tr>
       <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
       <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>1</th>
       <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>Feature</td>
+      <td>3.818297e+07</td>
+      <td>4.950469e+08</td>
+      <td>5.332299e+08</td>
+      <td>0.08</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.142117</td>
+      <td>0.000795</td>
+      <td>-0.073258</td>
+      <td>8.494101e-02</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>Calcium antagonist intake</td>
-      <td>Drug</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Statin intake</td>
-      <td>Drug</td>
-    </tr>
-    <tr>
-      <th>8</th>
+      <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
       <td>VLDL Cholesterol mg/dL</td>
-      <td>Feature</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>-3.456972e+00</td>
+      <td>-1.465870e-01</td>
+      <td>-3.603560e+00</td>
+      <td>0.04</td>
+      <td>0.82</td>
+      <td>0.02</td>
+      <td>-0.107252</td>
+      <td>0.011537</td>
+      <td>0.967332</td>
+      <td>0.000000e+00</td>
     </tr>
     <tr>
-      <th>12</th>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>Metformin intake</td>
-      <td>Drug</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>37</th>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>39</th>
-      <td>Aspirine intake</td>
-      <td>Drug</td>
-    </tr>
-    <tr>
-      <th>40</th>
-      <td>observed species richness</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>41</th>
-      <td>IDL Apo-B mg/dL</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>56</th>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>Feature</td>
-    </tr>
-    <tr>
-      <th>57</th>
-      <td>Fat mass in %</td>
-      <td>Feature</td>
+      <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>VLDL Cholesterol mg/dL</td>
+      <td>-7.402533e-01</td>
+      <td>-2.008808e-02</td>
+      <td>-7.603414e-01</td>
+      <td>0.08</td>
+      <td>0.64</td>
+      <td>0.04</td>
+      <td>-0.105938</td>
+      <td>0.012600</td>
+      <td>0.967332</td>
+      <td>0.000000e+00</td>
     </tr>
   </tbody>
 </table>
@@ -14162,11 +14094,13 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># UNCOMMENT TO PRINT NODE TYPES TO FILE</span>
-<span class="c1">#nodetype_df.to_csv(&#39;fig2e_mediation_graph_node_types.tsv&#39;, sep=&#39;\t&#39;)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Uncomment to print to file</span>
+<span class="c1"># medres_df.to_csv(fileFolder  + &#39;mediation_results_drug_combination.csv&#39;, </span>
+<span class="c1">#                  index=0)</span>
+    
 </pre></div>
 
     </div>
