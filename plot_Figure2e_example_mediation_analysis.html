@@ -13101,17 +13101,13 @@ Psychological Methods 15:4, 309-334.
 <li>example_feature_table.csv</li>
 </ul>
 <p>File with source data on host and microbiome feature values per sample.</p>
-<ul>
-<li>hub.pheno.v8.data.frame.r</li>
-</ul>
-<p>File with source data on phenotype features in each sample.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load necessary libraries</span>
@@ -13130,13 +13126,12 @@ Psychological Methods 15:4, 309-334.
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prepare file names to download: phenotype, drug and feature information</span>
 <span class="n">fileFolder</span> <span class="o">=</span> <span class="s1">&#39;./input_data/&#39;</span>
 
-<span class="n">hubfilePhenotype</span> <span class="o">=</span> <span class="s1">&#39;hub.pheno.v8.data.frame.r&#39;</span>
 <span class="n">featureFile</span> <span class="o">=</span> <span class="s1">&#39;example_feature_table.csv&#39;</span>
 <span class="n">hubfileDrugDosage</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Tables_1_to_4_2019-09-13434.xlsx&#39;</span>
 <span class="n">sheetDrug</span> <span class="o">=</span> <span class="s1">&#39;ST 2b&#39;</span>
@@ -13145,9 +13140,6 @@ Psychological Methods 15:4, 309-334.
 
 <span class="c1"># read file names with features</span>
 <span class="n">features_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">featureFile</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># read phenotype and drug files</span>
-<span class="n">featuresPheno</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">hubfilePhenotype</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="n">featuresDrug</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">hubfileDrugDosage</span><span class="p">,</span> 
                            <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetDrug</span><span class="p">)</span>
@@ -13164,14 +13156,14 @@ Psychological Methods 15:4, 309-334.
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create dataframe with sample - group</span>
-<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresPheno</span><span class="p">[[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;Group&#39;</span><span class="p">]]</span>
-<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1">##################################################################</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read patient group information from Supplementary Table 1</span>
+<span class="n">hubfilePhenotype</span> <span class="o">=</span> <span class="s1">&#39;Supplementary_Tables_1_to_4_2019-09-13434.xlsx&#39;</span>
+<span class="n">sheetName</span> <span class="o">=</span> <span class="s1">&#39;ST 1b&#39;</span>
+<span class="n">indication_df</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">fileFolder</span> <span class="o">+</span> <span class="n">hubfilePhenotype</span><span class="p">,</span>
+                               <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheetName</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13181,7 +13173,27 @@ Psychological Methods 15:4, 309-334.
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create dataframe with sample - group</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">indication_df</span><span class="p">[[</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="s1">&#39;PatientGroup&#39;</span><span class="p">]]</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SampleID&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">##################################################################</span>
+<span class="c1"># keep only samples for which features are avaiable</span>
+<span class="n">common_samples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">featuresGroup</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">features_df</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+<span class="n">featuresGroup</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">common_samples</span><span class="p">,:]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#######################################</span>
@@ -13219,7 +13231,7 @@ Psychological Methods 15:4, 309-334.
     <span class="n">drug_df</span><span class="p">[</span><span class="s1">&#39;Drug&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># overlap with phenotype </span>
     <span class="n">drug_df</span> <span class="o">=</span> <span class="n">drug_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">featuresGroup</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
-    <span class="n">drug_df</span><span class="p">[</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">drug_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span>
+    <span class="n">drug_df</span><span class="p">[</span><span class="s1">&#39;Group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">featuresGroup</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">drug_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;PatientGroup&#39;</span><span class="p">]</span>
     
     <span class="c1">#############################</span>
     <span class="c1"># get feature names that are changing in this combination</span>
@@ -13341,42 +13353,42 @@ Psychological Methods 15:4, 309-334.
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Running mediation analysis for combination  STATINE_C  and  METFORMIN_C  in  3
-Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Toluene degradation, toluene =&gt; benzoate (M00538)
-Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  IDL Phospholipids mg/dL
-Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Fat mass in %
-Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
-Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  Xylene degradation, xylene =&gt; methylbenzoate (M00537)  and  Toluene degradation, toluene =&gt; benzoate (M00538)
+Performing mediation analysis for  Xylene degradation, xylene =&gt; methylbenzoate (M00537)  and  Fat mass in %
+Performing mediation analysis for  Xylene degradation, xylene =&gt; methylbenzoate (M00537)  and  methanogenesis (trimethylamine degradation) (MC0025)
+Performing mediation analysis for  Xylene degradation, xylene =&gt; methylbenzoate (M00537)  and  IDL Phospholipids mg/dL
 Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  Fat mass in %
-Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  Fat mass in %
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
-Performing mediation analysis for  Fat mass in %  and  Xylene degradation, xylene =&gt; methylbenzoate (M00537)
+Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  methanogenesis (trimethylamine degradation) (MC0025)
+Performing mediation analysis for  Toluene degradation, toluene =&gt; benzoate (M00538)  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  Fat mass in %  and  methanogenesis (trimethylamine degradation) (MC0025)
+Performing mediation analysis for  Fat mass in %  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  methanogenesis (trimethylamine degradation) (MC0025)  and  IDL Phospholipids mg/dL
 Running mediation analysis for combination  STATINE_C  and  ASA_C  in  3
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  IDL Apo-B mg/dL
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  IDL Phospholipids mg/dL
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  observed species richness
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  unclassified Oscillibacter (CAG00961)
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  Fat mass in %
-Performing mediation analysis for  glutamate degradation III (MF0032)  and  VLDL-3 Cholesterol mg/dL
-Performing mediation analysis for  IDL Apo-B mg/dL  and  IDL Phospholipids mg/dL
-Performing mediation analysis for  IDL Apo-B mg/dL  and  observed species richness
-Performing mediation analysis for  IDL Apo-B mg/dL  and  unclassified Oscillibacter (CAG00961)
-Performing mediation analysis for  IDL Apo-B mg/dL  and  Fat mass in %
-Performing mediation analysis for  IDL Apo-B mg/dL  and  VLDL-3 Cholesterol mg/dL
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  observed species richness
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  unclassified Oscillibacter (CAG00961)
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  Fat mass in %
-Performing mediation analysis for  IDL Phospholipids mg/dL  and  VLDL-3 Cholesterol mg/dL
-Performing mediation analysis for  observed species richness  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  observed species richness  and  IDL Apo-B mg/dL
 Performing mediation analysis for  observed species richness  and  Fat mass in %
+Performing mediation analysis for  observed species richness  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  observed species richness  and  glutamate degradation III (MF0032)
 Performing mediation analysis for  observed species richness  and  VLDL-3 Cholesterol mg/dL
-Performing mediation analysis for  unclassified Oscillibacter (CAG00961)  and  Fat mass in %
-Performing mediation analysis for  unclassified Oscillibacter (CAG00961)  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  observed species richness  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  IDL Apo-B mg/dL  and  Fat mass in %
+Performing mediation analysis for  IDL Apo-B mg/dL  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  IDL Apo-B mg/dL  and  glutamate degradation III (MF0032)
+Performing mediation analysis for  IDL Apo-B mg/dL  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  IDL Apo-B mg/dL  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  Fat mass in %  and  IDL Phospholipids mg/dL
+Performing mediation analysis for  Fat mass in %  and  glutamate degradation III (MF0032)
 Performing mediation analysis for  Fat mass in %  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  Fat mass in %  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  glutamate degradation III (MF0032)
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  IDL Phospholipids mg/dL  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  glutamate degradation III (MF0032)  and  unclassified Oscillibacter (CAG00961)
+Performing mediation analysis for  VLDL-3 Cholesterol mg/dL  and  unclassified Oscillibacter (CAG00961)
 Running mediation analysis for combination  STATINE_C  and  CA2_CBL_C  in  3
-Performing mediation analysis for  Alistipes sp. (motu_linkage_group_621)  and  VLDL Cholesterol mg/dL
-Performing mediation analysis for  Alistipes sp. (motu_linkage_group_621)  and  VLDL-3 Cholesterol mg/dL
 Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholesterol mg/dL
+Performing mediation analysis for  VLDL Cholesterol mg/dL  and  Alistipes sp. (motu_linkage_group_621)
+Performing mediation analysis for  VLDL-3 Cholesterol mg/dL  and  Alistipes sp. (motu_linkage_group_621)
 </pre>
 </div>
 </div>
@@ -13387,7 +13399,7 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">###############################</span>
@@ -13412,7 +13424,7 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># display mediation analysis results</span>
@@ -13473,150 +13485,14 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <th>0</th>
       <td>Combination: STATINE_C, METFORMIN_C</td>
       <td>3</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>2.213171e-01</td>
-      <td>3.257009e+00</td>
-      <td>3.478326e+00</td>
-      <td>0.10</td>
-      <td>0.02</td>
-      <td>0.02</td>
-      <td>0.122870</td>
-      <td>0.003774</td>
-      <td>0.404224</td>
-      <td>3.431863e-23</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>7.994857e-01</td>
-      <td>5.497242e+00</td>
-      <td>6.296728e+00</td>
-      <td>0.08</td>
-      <td>0.10</td>
-      <td>0.10</td>
-      <td>0.132860</td>
-      <td>0.001724</td>
-      <td>0.404224</td>
-      <td>3.431863e-23</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>3.047680e-01</td>
-      <td>3.217209e+00</td>
-      <td>3.521977e+00</td>
-      <td>0.08</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>0.122870</td>
-      <td>0.003774</td>
-      <td>-0.079177</td>
-      <td>6.255946e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>-8.581724e-02</td>
-      <td>-9.470994e-01</td>
-      <td>-1.032917e+00</td>
-      <td>0.06</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>-0.128331</td>
-      <td>0.002476</td>
-      <td>-0.079177</td>
-      <td>6.255946e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>Fat mass in %</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>-2.370408e-01</td>
-      <td>-2.169776e+00</td>
-      <td>-2.406817e+00</td>
-      <td>0.04</td>
-      <td>0.04</td>
-      <td>0.00</td>
-      <td>-0.168866</td>
-      <td>0.000065</td>
-      <td>-0.065193</td>
-      <td>1.253709e-01</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
-      <td>methanogenesis (trimethylamine degradation) (M...</td>
-      <td>9.580047e-01</td>
-      <td>4.782322e+00</td>
-      <td>5.740326e+00</td>
-      <td>0.00</td>
-      <td>0.16</td>
-      <td>0.08</td>
-      <td>0.132860</td>
-      <td>0.001724</td>
-      <td>0.404224</td>
-      <td>3.431863e-23</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>7.986219e-01</td>
-      <td>5.312680e+00</td>
-      <td>6.111302e+00</td>
-      <td>0.08</td>
-      <td>0.10</td>
-      <td>0.06</td>
-      <td>0.132860</td>
-      <td>0.001724</td>
-      <td>-0.087335</td>
-      <td>3.988864e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>-6.141057e-02</td>
-      <td>-9.699484e-01</td>
-      <td>-1.031359e+00</td>
-      <td>0.10</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>-0.128331</td>
-      <td>0.002476</td>
-      <td>-0.087335</td>
-      <td>3.988864e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, METFORMIN_C</td>
-      <td>3</td>
       <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
       <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
-      <td>6.787217e+00</td>
-      <td>-1.123190e-14</td>
-      <td>6.787217e+00</td>
-      <td>0.06</td>
+      <td>6.237268e+00</td>
+      <td>9.696814e-15</td>
+      <td>6.237268e+00</td>
+      <td>0.04</td>
       <td>0.00</td>
-      <td>0.06</td>
+      <td>0.04</td>
       <td>0.132860</td>
       <td>0.001724</td>
       <td>1.000000</td>
@@ -13626,18 +13502,154 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <th>0</th>
       <td>Combination: STATINE_C, METFORMIN_C</td>
       <td>3</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>Fat mass in %</td>
-      <td>-7.538589e-02</td>
-      <td>-9.711528e-01</td>
-      <td>-1.046539e+00</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>6.713999e+00</td>
+      <td>9.693862e-15</td>
+      <td>6.713999e+00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.02</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>1.000000</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>9.382286e-01</td>
+      <td>5.705046e+00</td>
+      <td>6.643274e+00</td>
+      <td>0.00</td>
       <td>0.08</td>
       <td>0.02</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>8.562095e-01</td>
+      <td>5.684111e+00</td>
+      <td>6.540321e+00</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.02</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>9.733000e-01</td>
+      <td>5.408961e+00</td>
+      <td>6.382262e+00</td>
+      <td>0.06</td>
+      <td>0.08</td>
+      <td>0.04</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>2.656689e-01</td>
+      <td>3.040219e+00</td>
+      <td>3.305888e+00</td>
+      <td>0.10</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.122870</td>
+      <td>0.003774</td>
+      <td>0.404224</td>
+      <td>3.431863e-23</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>9.130924e-01</td>
+      <td>5.244082e+00</td>
+      <td>6.157174e+00</td>
+      <td>0.02</td>
+      <td>0.12</td>
+      <td>0.08</td>
+      <td>0.132860</td>
+      <td>0.001724</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>Toluene degradation, toluene =&gt; benzoate (M00538)</td>
+      <td>-7.139031e-02</td>
+      <td>-9.884795e-01</td>
+      <td>-1.059870e+00</td>
+      <td>0.08</td>
+      <td>0.00</td>
       <td>0.02</td>
       <td>-0.128331</td>
       <td>0.002476</td>
-      <td>0.170003</td>
-      <td>5.778911e-05</td>
+      <td>-0.087335</td>
+      <td>3.988864e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>-2.384778e-01</td>
+      <td>-2.106637e+00</td>
+      <td>-2.345115e+00</td>
+      <td>0.02</td>
+      <td>0.04</td>
+      <td>0.04</td>
+      <td>-0.168866</td>
+      <td>0.000065</td>
+      <td>-0.065193</td>
+      <td>1.253709e-01</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>Fat mass in %</td>
+      <td>1.848833e-01</td>
+      <td>3.435597e+00</td>
+      <td>3.620480e+00</td>
+      <td>0.10</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.122870</td>
+      <td>0.003774</td>
+      <td>-0.065193</td>
+      <td>1.253709e-01</td>
     </tr>
     <tr>
       <th>0</th>
@@ -13645,12 +13657,12 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>Fat mass in %</td>
       <td>IDL Phospholipids mg/dL</td>
-      <td>-2.547528e-01</td>
-      <td>-2.078203e+00</td>
-      <td>-2.332956e+00</td>
-      <td>0.10</td>
-      <td>0.06</td>
+      <td>-2.653923e-01</td>
+      <td>-2.072050e+00</td>
+      <td>-2.337442e+00</td>
       <td>0.04</td>
+      <td>0.02</td>
+      <td>0.02</td>
       <td>-0.168866</td>
       <td>0.000065</td>
       <td>0.170003</td>
@@ -13660,120 +13672,35 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <th>0</th>
       <td>Combination: STATINE_C, METFORMIN_C</td>
       <td>3</td>
-      <td>Xylene degradation, xylene =&gt; methylbenzoate (...</td>
       <td>IDL Phospholipids mg/dL</td>
-      <td>8.779179e-01</td>
-      <td>5.299366e+00</td>
-      <td>6.177284e+00</td>
+      <td>Fat mass in %</td>
+      <td>-8.053449e-02</td>
+      <td>-9.836368e-01</td>
+      <td>-1.064171e+00</td>
+      <td>0.08</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.128331</td>
+      <td>0.002476</td>
+      <td>0.170003</td>
+      <td>5.778911e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, METFORMIN_C</td>
+      <td>3</td>
+      <td>methanogenesis (trimethylamine degradation) (M...</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>2.917346e-01</td>
+      <td>3.109047e+00</td>
+      <td>3.400781e+00</td>
       <td>0.08</td>
       <td>0.02</td>
-      <td>0.02</td>
-      <td>0.132860</td>
-      <td>0.001724</td>
-      <td>-0.087335</td>
-      <td>3.988864e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>observed species richness</td>
-      <td>1.071072e+01</td>
-      <td>5.031797e+01</td>
-      <td>6.102869e+01</td>
       <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.155559</td>
-      <td>0.000237</td>
-      <td>0.510726</td>
-      <td>3.909109e-38</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>observed species richness</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>5.579729e+00</td>
-      <td>9.912977e+00</td>
-      <td>1.549271e+01</td>
-      <td>0.00</td>
-      <td>0.06</td>
-      <td>0.02</td>
-      <td>0.122269</td>
-      <td>0.003949</td>
-      <td>0.510726</td>
-      <td>3.909109e-38</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>6.796470e+00</td>
-      <td>5.537452e+01</td>
-      <td>6.217099e+01</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.155559</td>
-      <td>0.000237</td>
-      <td>0.365748</td>
-      <td>5.612626e-19</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>glutamate degradation III (MF0032)</td>
-      <td>1.667057e+00</td>
-      <td>5.971316e+00</td>
-      <td>7.638373e+00</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.158203</td>
-      <td>0.000185</td>
-      <td>0.365748</td>
-      <td>5.612626e-19</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>-8.622815e-01</td>
-      <td>-6.381434e-02</td>
-      <td>-9.260958e-01</td>
-      <td>0.00</td>
-      <td>0.64</td>
-      <td>0.00</td>
-      <td>-0.166427</td>
-      <td>0.000083</td>
-      <td>0.922800</td>
-      <td>8.198169e-231</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-2.231615e+00</td>
-      <td>-1.317818e-01</td>
-      <td>-2.363396e+00</td>
-      <td>0.00</td>
-      <td>0.70</td>
-      <td>0.00</td>
-      <td>-0.175098</td>
-      <td>0.000034</td>
-      <td>0.922800</td>
-      <td>8.198169e-231</td>
+      <td>0.122870</td>
+      <td>0.003774</td>
+      <td>-0.079177</td>
+      <td>6.255946e-02</td>
     </tr>
     <tr>
       <th>0</th>
@@ -13781,10 +13708,10 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>observed species richness</td>
       <td>IDL Apo-B mg/dL</td>
-      <td>1.872683e+00</td>
-      <td>1.464716e+01</td>
-      <td>1.651984e+01</td>
-      <td>0.06</td>
+      <td>1.868372e+00</td>
+      <td>1.434676e+01</td>
+      <td>1.621513e+01</td>
+      <td>0.04</td>
       <td>0.02</td>
       <td>0.00</td>
       <td>0.122269</td>
@@ -13797,68 +13724,34 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
       <td>IDL Apo-B mg/dL</td>
-      <td>Fat mass in %</td>
-      <td>-7.850538e-02</td>
-      <td>-8.913002e-01</td>
-      <td>-9.698056e-01</td>
-      <td>0.02</td>
+      <td>observed species richness</td>
+      <td>-5.460868e-02</td>
+      <td>-8.943688e-01</td>
+      <td>-9.489775e-01</td>
+      <td>0.06</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>-0.166427</td>
       <td>0.000083</td>
-      <td>0.183670</td>
-      <td>1.359000e-05</td>
+      <td>-0.093991</td>
+      <td>2.695347e-02</td>
     </tr>
     <tr>
       <th>0</th>
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
-      <td>Fat mass in %</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-6.052970e-01</td>
-      <td>-4.823743e+00</td>
-      <td>-5.429040e+00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>-0.181373</td>
-      <td>0.000017</td>
-      <td>0.183670</td>
-      <td>1.359000e-05</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-4.149293e-01</td>
-      <td>-5.308434e-01</td>
-      <td>-9.457727e-01</td>
+      <td>observed species richness</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>1.977880e+00</td>
+      <td>1.384414e+01</td>
+      <td>1.582202e+01</td>
       <td>0.02</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>-0.166427</td>
-      <td>0.000083</td>
-      <td>0.613403</td>
-      <td>1.452435e-58</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>IDL Apo-B mg/dL</td>
-      <td>-9.024739e-01</td>
-      <td>-4.907066e-02</td>
-      <td>-9.515446e-01</td>
-      <td>0.00</td>
-      <td>0.92</td>
-      <td>0.00</td>
-      <td>-0.118752</td>
-      <td>0.005131</td>
-      <td>0.613403</td>
-      <td>1.452435e-58</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>-0.094625</td>
+      <td>2.593589e-02</td>
     </tr>
     <tr>
       <th>0</th>
@@ -13866,10 +13759,10 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>IDL Phospholipids mg/dL</td>
       <td>observed species richness</td>
-      <td>-1.281574e-01</td>
-      <td>-2.138696e+00</td>
-      <td>-2.266853e+00</td>
-      <td>0.02</td>
+      <td>-1.206294e-01</td>
+      <td>-2.198755e+00</td>
+      <td>-2.319384e+00</td>
+      <td>0.08</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>-0.175098</td>
@@ -13882,17 +13775,170 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
       <td>observed species richness</td>
-      <td>IDL Phospholipids mg/dL</td>
-      <td>1.846366e+00</td>
-      <td>1.488115e+01</td>
-      <td>1.672752e+01</td>
-      <td>0.04</td>
-      <td>0.02</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>5.847726e+00</td>
+      <td>9.671837e+00</td>
+      <td>1.551956e+01</td>
       <td>0.00</td>
+      <td>0.20</td>
+      <td>0.02</td>
       <td>0.122269</td>
       <td>0.003949</td>
-      <td>-0.094625</td>
-      <td>2.593589e-02</td>
+      <td>0.510726</td>
+      <td>3.909109e-38</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>observed species richness</td>
+      <td>1.096039e+01</td>
+      <td>5.044274e+01</td>
+      <td>6.140313e+01</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.155559</td>
+      <td>0.000237</td>
+      <td>0.510726</td>
+      <td>3.909109e-38</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>observed species richness</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>2.829299e+00</td>
+      <td>1.405015e+01</td>
+      <td>1.687945e+01</td>
+      <td>0.06</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.122269</td>
+      <td>0.003949</td>
+      <td>0.488774</td>
+      <td>1.309544e-34</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>observed species richness</td>
+      <td>1.055815e+00</td>
+      <td>6.473204e+00</td>
+      <td>7.529019e+00</td>
+      <td>0.00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.158203</td>
+      <td>0.000185</td>
+      <td>0.488774</td>
+      <td>1.309544e-34</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>Fat mass in %</td>
+      <td>-7.637911e-02</td>
+      <td>-8.819580e-01</td>
+      <td>-9.583371e-01</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.183670</td>
+      <td>1.359000e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>Fat mass in %</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-5.780934e-01</td>
+      <td>-5.040170e+00</td>
+      <td>-5.618263e+00</td>
+      <td>0.00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>-0.181373</td>
+      <td>0.000017</td>
+      <td>0.183670</td>
+      <td>1.359000e-05</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>-8.978158e-01</td>
+      <td>-7.467772e-02</td>
+      <td>-9.724935e-01</td>
+      <td>0.00</td>
+      <td>0.46</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.922800</td>
+      <td>8.198169e-231</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-2.149235e+00</td>
+      <td>-1.923683e-01</td>
+      <td>-2.341604e+00</td>
+      <td>0.00</td>
+      <td>0.30</td>
+      <td>0.00</td>
+      <td>-0.175098</td>
+      <td>0.000034</td>
+      <td>0.922800</td>
+      <td>8.198169e-231</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>-4.490966e-01</td>
+      <td>-5.261609e-01</td>
+      <td>-9.752575e-01</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>-0.166427</td>
+      <td>0.000083</td>
+      <td>0.613403</td>
+      <td>1.452435e-58</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>IDL Apo-B mg/dL</td>
+      <td>-9.126945e-01</td>
+      <td>-7.224801e-02</td>
+      <td>-9.849425e-01</td>
+      <td>0.00</td>
+      <td>0.84</td>
+      <td>0.02</td>
+      <td>-0.118752</td>
+      <td>0.005131</td>
+      <td>0.613403</td>
+      <td>1.452435e-58</td>
     </tr>
     <tr>
       <th>0</th>
@@ -13900,10 +13946,10 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>Fat mass in %</td>
       <td>IDL Phospholipids mg/dL</td>
-      <td>-5.337777e-01</td>
-      <td>-5.027523e+00</td>
-      <td>-5.561301e+00</td>
-      <td>0.02</td>
+      <td>-5.346147e-01</td>
+      <td>-5.247952e+00</td>
+      <td>-5.782566e+00</td>
+      <td>0.04</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>-0.181373</td>
@@ -13915,11 +13961,79 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <th>0</th>
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
+      <td>Fat mass in %</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>-3.987813e-01</td>
+      <td>-5.460462e+00</td>
+      <td>-5.859244e+00</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.181373</td>
+      <td>0.000017</td>
+      <td>-0.141452</td>
+      <td>8.418135e-04</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>unclassified Oscillibacter (CAG00961)</td>
+      <td>Fat mass in %</td>
+      <td>7.933839e-01</td>
+      <td>6.750814e+00</td>
+      <td>7.544198e+00</td>
+      <td>0.02</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.158203</td>
+      <td>0.000185</td>
+      <td>-0.141452</td>
+      <td>8.418135e-04</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>-1.661663e-01</td>
+      <td>-2.168195e+00</td>
+      <td>-2.334361e+00</td>
+      <td>0.08</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>-0.175098</td>
+      <td>0.000034</td>
+      <td>-0.090746</td>
+      <td>3.272166e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>IDL Phospholipids mg/dL</td>
+      <td>4.895558e+00</td>
+      <td>5.698525e+01</td>
+      <td>6.188081e+01</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.155559</td>
+      <td>0.000237</td>
+      <td>-0.090746</td>
+      <td>3.272166e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, ASA_C</td>
+      <td>3</td>
       <td>IDL Phospholipids mg/dL</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-1.242323e+00</td>
-      <td>-1.018107e+00</td>
-      <td>-2.260430e+00</td>
+      <td>-1.354020e+00</td>
+      <td>-1.078070e+00</td>
+      <td>-2.432089e+00</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>0.00</td>
@@ -13934,12 +14048,12 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
       <td>IDL Phospholipids mg/dL</td>
-      <td>-1.103751e+00</td>
-      <td>1.802580e-01</td>
-      <td>-9.234933e-01</td>
+      <td>-1.084517e+00</td>
+      <td>1.498544e-01</td>
+      <td>-9.346629e-01</td>
       <td>0.00</td>
-      <td>0.42</td>
-      <td>0.00</td>
+      <td>0.44</td>
+      <td>0.02</td>
       <td>-0.118752</td>
       <td>0.005131</td>
       <td>0.753112</td>
@@ -13949,103 +14063,35 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <th>0</th>
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
-      <td>observed species richness</td>
+      <td>glutamate degradation III (MF0032)</td>
       <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>2.603756e+00</td>
-      <td>1.318794e+01</td>
-      <td>1.579170e+01</td>
+      <td>7.016845e+00</td>
+      <td>5.523380e+01</td>
+      <td>6.225065e+01</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>0.00</td>
-      <td>0.122269</td>
-      <td>0.003949</td>
-      <td>0.488774</td>
-      <td>1.309544e-34</td>
+      <td>0.155559</td>
+      <td>0.000237</td>
+      <td>0.365748</td>
+      <td>5.612626e-19</td>
     </tr>
     <tr>
       <th>0</th>
       <td>Combination: STATINE_C, ASA_C</td>
       <td>3</td>
       <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>observed species richness</td>
-      <td>1.116793e+00</td>
-      <td>6.547467e+00</td>
-      <td>7.664261e+00</td>
-      <td>0.02</td>
+      <td>glutamate degradation III (MF0032)</td>
+      <td>1.557684e+00</td>
+      <td>6.370957e+00</td>
+      <td>7.928641e+00</td>
+      <td>0.00</td>
       <td>0.00</td>
       <td>0.00</td>
       <td>0.158203</td>
       <td>0.000185</td>
-      <td>0.488774</td>
-      <td>1.309544e-34</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>Fat mass in %</td>
-      <td>7.816655e-01</td>
-      <td>6.706836e+00</td>
-      <td>7.488502e+00</td>
-      <td>0.04</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.158203</td>
-      <td>0.000185</td>
-      <td>-0.141452</td>
-      <td>8.418135e-04</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, ASA_C</td>
-      <td>3</td>
-      <td>Fat mass in %</td>
-      <td>unclassified Oscillibacter (CAG00961)</td>
-      <td>-4.124701e-01</td>
-      <td>-5.041563e+00</td>
-      <td>-5.454033e+00</td>
-      <td>0.04</td>
-      <td>0.02</td>
-      <td>0.00</td>
-      <td>-0.181373</td>
-      <td>0.000017</td>
-      <td>-0.141452</td>
-      <td>8.418135e-04</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, CA2_CBL_C</td>
-      <td>3</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>VLDL Cholesterol mg/dL</td>
-      <td>4.305882e+07</td>
-      <td>4.927297e+08</td>
-      <td>5.357886e+08</td>
-      <td>0.06</td>
-      <td>0.04</td>
-      <td>0.00</td>
-      <td>0.142117</td>
-      <td>0.000795</td>
-      <td>-0.069984</td>
-      <td>9.985967e-02</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Combination: STATINE_C, CA2_CBL_C</td>
-      <td>3</td>
-      <td>Alistipes sp. (motu_linkage_group_621)</td>
-      <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>3.818297e+07</td>
-      <td>4.950469e+08</td>
-      <td>5.332299e+08</td>
-      <td>0.08</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.142117</td>
-      <td>0.000795</td>
-      <td>-0.073258</td>
-      <td>8.494101e-02</td>
+      <td>0.365748</td>
+      <td>5.612626e-19</td>
     </tr>
     <tr>
       <th>0</th>
@@ -14053,12 +14099,12 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>VLDL Cholesterol mg/dL</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
-      <td>-3.456972e+00</td>
-      <td>-1.465870e-01</td>
-      <td>-3.603560e+00</td>
-      <td>0.04</td>
-      <td>0.82</td>
-      <td>0.02</td>
+      <td>-3.644372e+00</td>
+      <td>-9.320465e-02</td>
+      <td>-3.737577e+00</td>
+      <td>0.00</td>
+      <td>0.74</td>
+      <td>0.00</td>
       <td>-0.107252</td>
       <td>0.011537</td>
       <td>0.967332</td>
@@ -14070,16 +14116,50 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
       <td>3</td>
       <td>VLDL-3 Cholesterol mg/dL</td>
       <td>VLDL Cholesterol mg/dL</td>
-      <td>-7.402533e-01</td>
-      <td>-2.008808e-02</td>
-      <td>-7.603414e-01</td>
-      <td>0.08</td>
-      <td>0.64</td>
-      <td>0.04</td>
+      <td>-7.563084e-01</td>
+      <td>-2.016900e-02</td>
+      <td>-7.764774e-01</td>
+      <td>0.06</td>
+      <td>0.86</td>
+      <td>0.06</td>
       <td>-0.105938</td>
       <td>0.012600</td>
       <td>0.967332</td>
       <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
+      <td>Alistipes sp. (motu_linkage_group_621)</td>
+      <td>VLDL Cholesterol mg/dL</td>
+      <td>3.900420e+07</td>
+      <td>4.851789e+08</td>
+      <td>5.241831e+08</td>
+      <td>0.04</td>
+      <td>0.06</td>
+      <td>0.06</td>
+      <td>0.142117</td>
+      <td>0.000795</td>
+      <td>-0.069984</td>
+      <td>9.985967e-02</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>Combination: STATINE_C, CA2_CBL_C</td>
+      <td>3</td>
+      <td>Alistipes sp. (motu_linkage_group_621)</td>
+      <td>VLDL-3 Cholesterol mg/dL</td>
+      <td>4.235760e+07</td>
+      <td>4.552042e+08</td>
+      <td>4.975618e+08</td>
+      <td>0.10</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.142117</td>
+      <td>0.000795</td>
+      <td>-0.073258</td>
+      <td>8.494101e-02</td>
     </tr>
   </tbody>
 </table>
@@ -14094,12 +14174,12 @@ Performing mediation analysis for  VLDL Cholesterol mg/dL  and  VLDL-3 Cholester
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Uncomment to print to file</span>
-<span class="c1"># medres_df.to_csv(fileFolder  + &#39;mediation_results_drug_combination.csv&#39;, </span>
-<span class="c1">#                  index=0)</span>
+<span class="c1">#medres_df.to_csv(fileFolder  + &#39;mediation_results_drug_combination.csv&#39;, </span>
+<span class="c1">#                 index=0)</span>
     
 </pre></div>
 

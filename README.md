@@ -119,9 +119,6 @@ File containing all associations between drugs and features in T2D group (both s
 
 File with source data on enterotype classification of each sample.
 
-- hub.pheno.v8.data.frame.r
-
-File with source data on phenotype features in each sample.
 
 - hub.microbiome.summary.down.10000000.r
 
