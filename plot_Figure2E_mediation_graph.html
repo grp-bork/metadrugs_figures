@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>plot_Figure2E_mediation_graph</title>
+<title>plot_Figure2e_mediation_graph</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13106,7 +13106,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load required libraries</span>
@@ -13125,7 +13125,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[113]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read combination feature mediation file</span>
@@ -13152,7 +13152,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read single drug features files</span>
@@ -13169,7 +13169,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read drug combination features files</span>
@@ -13186,7 +13186,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[116]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># concatenate single drug effects and combination effects</span>
@@ -13200,7 +13200,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[117]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># get the patient groups (Sample set column)</span>
@@ -13222,11 +13222,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_set_idx</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># select Group T2D (3)</span>
-<span class="n">curset</span> <span class="o">=</span> <span class="n">listconditions</span><span class="p">[</span><span class="n">sample_set_idx</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">curset</span> <span class="o">=</span> <span class="s1">&#39;T2D (3)&#39;</span> <span class="c1"># select Group T2D (3)</span>
 <span class="c1"># copy all effects for one condition to reduce number</span>
 <span class="n">selectedEffectd_df</span> <span class="o">=</span> <span class="n">allEffects_df</span><span class="p">[(</span><span class="n">allEffects_df</span><span class="p">[</span><span class="s1">&#39;Sample set&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">curset</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)]</span>
 </pre></div>
@@ -13238,7 +13237,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select only features with congruence opposite of disease (drug and disease effects are opposite)</span>
@@ -13252,7 +13251,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create a dataframe containing information on the potential features and mediators</span>
@@ -13291,7 +13290,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[121]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
@@ -13313,7 +13312,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[122]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ploteffectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span><span class="p">[</span><span class="s1">&#39;Effector&#39;</span><span class="p">]))</span>
@@ -13326,7 +13325,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[123]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ploteffectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ploteffectors</span> 
@@ -13346,15 +13345,15 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[123]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[&#39;Combination: Statin intake, Aspirine intake&#39;,
+<pre>[&#39;Combination: Calcium antagonist intake, Statin intake&#39;,
  &#39;Combination: Metformin intake, Statin intake&#39;,
- &#39;Combination: Calcium antagonist intake, Statin intake&#39;]</pre>
+ &#39;Combination: Statin intake, Aspirine intake&#39;]</pre>
 </div>
 
 </div>
@@ -13373,7 +13372,348 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[124]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Effector</th>
+      <th>Sample set</th>
+      <th>Feature1</th>
+      <th>Feature2_med</th>
+      <th>FeatureSpace1</th>
+      <th>FeatureSpace2</th>
+      <th>ACME (average)_Estimate</th>
+      <th>ADE (average)_Estimate</th>
+      <th>Total effect_Estimate</th>
+      <th>ACME (average)_P-value</th>
+      <th>...</th>
+      <th>Total effect_P-value</th>
+      <th>FeatureID1</th>
+      <th>FeatureID2</th>
+      <th>FeatureDrugCorr</th>
+      <th>FeatureDrugCorrP</th>
+      <th>FeatureFeatureCorr</th>
+      <th>FeatureFeatureCorrP</th>
+      <th>Feature1_Type</th>
+      <th>Feature2_Type</th>
+      <th>FeatureTypes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Combination: ACE intake, Aspirine intake</td>
+      <td>MetS (1)</td>
+      <td>Unannotated serum metabolite (7.055425 PPM)</td>
+      <td>unclassified Firmicutes (CAG01153)</td>
+      <td>Serum, unannotated</td>
+      <td>MGS</td>
+      <td>232.682304</td>
+      <td>1506.937363</td>
+      <td>1739.619666</td>
+      <td>0.100</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>NMR_v2_SERUM_242_PPM7.055425</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.1165</td>
+      <td>0.135916</td>
+      <td>0.031353</td>
+      <td>0.050925</td>
+      <td>0.421805</td>
+      <td>Host</td>
+      <td>Bact</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Combination: ACE intake, Aspirine intake</td>
+      <td>Chronic CAD (5)</td>
+      <td>Blautia sp. CAG:257 (CAG01293)</td>
+      <td>Alanine</td>
+      <td>MGS</td>
+      <td>Serum, NMR absolute</td>
+      <td>-0.007616</td>
+      <td>0.010583</td>
+      <td>0.002967</td>
+      <td>0.076</td>
+      <td>...</td>
+      <td>0.888</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.1315</td>
+      <td>SERUM_NMR_ABSOLUTE_Alanine</td>
+      <td>-0.041737</td>
+      <td>0.601416</td>
+      <td>0.155095</td>
+      <td>0.050930</td>
+      <td>Bact</td>
+      <td>Host</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Combination: ACE intake, Beta-blocker intake</td>
+      <td>T2D (3)</td>
+      <td>unclassified Firmicutes (CAG01223)</td>
+      <td>Unannotated serum metabolite (7.3439 PPM)</td>
+      <td>MGS</td>
+      <td>Serum, unannotated</td>
+      <td>0.070816</td>
+      <td>0.123033</td>
+      <td>0.193849</td>
+      <td>0.046</td>
+      <td>...</td>
+      <td>0.470</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.1240</td>
+      <td>NMR_v2_SERUM_260_PPM7.3439</td>
+      <td>0.076553</td>
+      <td>0.071794</td>
+      <td>0.046753</td>
+      <td>0.271965</td>
+      <td>Bact</td>
+      <td>Host</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Combination: ACE intake, Beta-blocker intake</td>
+      <td>T2D (3)</td>
+      <td>unclassified Firmicutes (CAG01223)</td>
+      <td>Unannotated urine metabolite (3.2692 PPM)</td>
+      <td>MGS</td>
+      <td>Urine, unannotated</td>
+      <td>-0.117279</td>
+      <td>0.303841</td>
+      <td>0.186561</td>
+      <td>0.028</td>
+      <td>...</td>
+      <td>0.464</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.1240</td>
+      <td>NMR_v2_URINE_321_PPM3.2692</td>
+      <td>0.076553</td>
+      <td>0.071794</td>
+      <td>0.019295</td>
+      <td>0.650421</td>
+      <td>Bact</td>
+      <td>Host</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Combination: ACE intake, Diuretic intake</td>
+      <td>Obesity, morbid (2b)</td>
+      <td>Methanobrevibacter smithii 2 (CAG01189)</td>
+      <td>Acetic_acid (urine)</td>
+      <td>MGS</td>
+      <td>Urine, annotated</td>
+      <td>0.021168</td>
+      <td>0.095218</td>
+      <td>0.116386</td>
+      <td>0.046</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.1204</td>
+      <td>URINE_V2_Acetic_acid</td>
+      <td>0.360765</td>
+      <td>0.000015</td>
+      <td>0.124180</td>
+      <td>0.148239</td>
+      <td>Bact</td>
+      <td>Host</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>5764</th>
+      <td>Combination: Thiazidique intake, Statin intake</td>
+      <td>MetS (1)</td>
+      <td>IDL Cholesterol mg/dL</td>
+      <td>unclassified Oscillibacter (CAG00985)</td>
+      <td>Serum, lipoproteins</td>
+      <td>MGS</td>
+      <td>-0.601905</td>
+      <td>-3.088073</td>
+      <td>-3.689978</td>
+      <td>0.060</td>
+      <td>...</td>
+      <td>0.120</td>
+      <td>IDCH</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.938</td>
+      <td>-0.120623</td>
+      <td>0.056332</td>
+      <td>-0.106974</td>
+      <td>0.090800</td>
+      <td>Host</td>
+      <td>Bact</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>5765</th>
+      <td>Combination: Thiazidique intake, Statin intake</td>
+      <td>MetS (1)</td>
+      <td>Unannotated serum metabolite (3.099 PPM)</td>
+      <td>unclassified Oscillibacter (CAG00985)</td>
+      <td>Serum, unannotated</td>
+      <td>MGS</td>
+      <td>156.598622</td>
+      <td>1474.221448</td>
+      <td>1630.820070</td>
+      <td>0.080</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>NMR_v2_SERUM_130_PPM3.099</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.938</td>
+      <td>0.167163</td>
+      <td>0.007958</td>
+      <td>0.058964</td>
+      <td>0.352205</td>
+      <td>Host</td>
+      <td>Bact</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>5766</th>
+      <td>Combination: Thiazidique intake, Statin intake</td>
+      <td>MetS (1)</td>
+      <td>HDL-cholesterol in mmol/l</td>
+      <td>unclassified Oscillibacter (CAG00985)</td>
+      <td>Phenotype</td>
+      <td>MGS</td>
+      <td>0.057962</td>
+      <td>0.096212</td>
+      <td>0.154174</td>
+      <td>0.040</td>
+      <td>...</td>
+      <td>0.080</td>
+      <td>FASTLIPHDLC_C</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.938</td>
+      <td>0.080407</td>
+      <td>0.204231</td>
+      <td>0.196394</td>
+      <td>0.001769</td>
+      <td>Host</td>
+      <td>Bact</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>5767</th>
+      <td>Combination: Thiazidique intake, Statin intake</td>
+      <td>MetS (1)</td>
+      <td>unclassified Oscillibacter (CAG00985)</td>
+      <td>LDL-cholesterol in mmol/l</td>
+      <td>MGS</td>
+      <td>Phenotype</td>
+      <td>0.031986</td>
+      <td>0.201756</td>
+      <td>0.233742</td>
+      <td>0.038</td>
+      <td>...</td>
+      <td>0.004</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.938</td>
+      <td>FASTLIPLDL_C</td>
+      <td>0.240168</td>
+      <td>0.000122</td>
+      <td>-0.162244</td>
+      <td>0.010033</td>
+      <td>Bact</td>
+      <td>Host</td>
+      <td>Opposite</td>
+    </tr>
+    <tr>
+      <th>5768</th>
+      <td>Combination: Thiazidique intake, Statin intake</td>
+      <td>MetS (1)</td>
+      <td>LDL-cholesterol in mmol/l</td>
+      <td>unclassified Oscillibacter (CAG00985)</td>
+      <td>Phenotype</td>
+      <td>MGS</td>
+      <td>-0.098259</td>
+      <td>-0.582586</td>
+      <td>-0.680845</td>
+      <td>0.080</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>FASTLIPLDL_C</td>
+      <td>TaxonAdjustedID.MGS.down.10000000.v6.938</td>
+      <td>-0.195988</td>
+      <td>0.001809</td>
+      <td>-0.162244</td>
+      <td>0.010033</td>
+      <td>Host</td>
+      <td>Bact</td>
+      <td>Opposite</td>
+    </tr>
+  </tbody>
+</table>
+<p>5769 rows × 21 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
@@ -13390,7 +13730,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[125]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">feature_set</span> <span class="o">=</span> <span class="s1">&#39;T2D (3)&#39;</span>
@@ -13406,7 +13746,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[126]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mediation_df_filtered_combined_filtered_features_subset</span> <span class="o">=</span> \
@@ -13429,7 +13769,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[127]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">newcolumn_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Feature1_drug1&#39;</span><span class="p">,</span><span class="s1">&#39;Feature1_drug2&#39;</span><span class="p">,</span>
@@ -13450,7 +13790,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[128]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prepare a subset of features to record effect of each drug on each feature</span>
@@ -13465,7 +13805,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[129]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># populate the dataframe with information on which drugs are associated with each feature</span>
@@ -13510,7 +13850,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[130]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># for plotting, select only mediated features that are both affected by the drug combination</span>
@@ -13526,7 +13866,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[131]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select only features that pass correlation p-value threshold of 0.1</span>
@@ -13548,7 +13888,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[132]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plotdata</span> <span class="o">=</span> <span class="n">plotdata_both_corr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -13561,7 +13901,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[133]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># represent the data as graph nodes (drugs and features)</span>
@@ -13622,7 +13962,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[134]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># make a dataframe of the graph nodes</span>
@@ -13643,7 +13983,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[135]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">graph_df</span>
@@ -13659,7 +13999,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[135]:</div>
+    <div class="prompt output_prompt">Out[25]:</div>
 
 
 
@@ -13996,7 +14336,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[136]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># UNCOMMENT TO PRINT GRAPH EDGES TO FILE</span>
@@ -14010,7 +14350,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[137]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># make a dataframe of node types</span>
@@ -14025,7 +14365,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[138]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">nodetype_df</span>
@@ -14041,7 +14381,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[138]:</div>
+    <div class="prompt output_prompt">Out[28]:</div>
 
 
 
@@ -14162,7 +14502,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># UNCOMMENT TO PRINT NODE TYPES TO FILE</span>
@@ -14170,6 +14510,51 @@ div#notebook {
 </pre></div>
 
     </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1">#print package versions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sesssion info:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Python: &#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;numpy: &#39;</span><span class="p">,</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pandas: &#39;</span><span class="p">,</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s1">&#39;pandas&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;matplotlib: &#39;</span><span class="p">,</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s1">&#39;matplotlib&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;seaborn: &#39;</span><span class="p">,</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="s1">&#39;seaborn&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sesssion info:
+Python:  3.7.7 (default, Apr 15 2020, 05:09:04) [MSC v.1916 64 bit (AMD64)]
+numpy:  1.18.1
+pandas:  1.0.3
+matplotlib:  3.1.3
+seaborn:  0.10.0
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 

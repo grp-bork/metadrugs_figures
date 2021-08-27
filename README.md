@@ -28,10 +28,6 @@ Figure 1c: Hierarchical clustering of drug-feature associations
 
 Figure 1d: Aspirin-host-microbiome associations
 
-- *plot_Figure1e.Rmd/html*
-
-Figure 1e: SNV analysis results for oral and gut strains in patients taking PPI
-
 - *plot_Figure2a.Rmd/html*
 
 Figure 2a: Drug combinations statistics as barplot
@@ -49,6 +45,10 @@ Figure 2cd: Drug combination associations with host and microbiome
 Figure 2e: Drug combination associations with host and microbiome - example of mediation analysis results
 
 - *plot_Figure2e_example_mediation_analysis.ipynb/html*
+
+- *plot_Figure_snv.Rmd/html*
+
+Extended Data Figure 4: SNV analysis results for oral and gut strains in patients taking PPI
 
 Python script to perform mediation analysis for the three drug combinations in Figure 2e.
 
@@ -119,7 +119,6 @@ File containing all associations between drugs and features in T2D group (both s
 
 File with source data on enterotype classification of each sample.
 
-
 - hub.microbiome.summary.down.10000000.r
 
 File with source data on summary microbiome features per sample (such as gene richness, abundance of antibiotic resistance genes, etc.)
@@ -130,3 +129,4 @@ File with source data on microbial species abundances estimated with mOTU softwa
 
 The *input_data* folder is available for download at:
 
+https://doi.org/10.5281/zenodo.4728981
