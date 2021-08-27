@@ -1708,13 +1708,19 @@ ccds &lt;- merge (ccds, md, by = 0)</code></pre>
 <pre class="r"><code># corr between AB courses and PC in controls
 ccdssub1 &lt;- subset (ccds, PatientGroup == &quot;8&quot;)
 ccc &lt;- cor.test (ccdssub1$PC1, ccdssub1$ANTIBIOTICS_TOTAL, method = &quot;spearman&quot;)
-print(paste0('Spearman corr between PC1 and AB courses in controls is ',
+print(paste0('Size of control group: N = ',
+             dim(ccdssub1)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of control group: N = 256&quot;</code></pre>
+<pre class="r"><code>print(paste0('Spearman corr between PC1 and AB courses in controls is ',
              ccc$estimate, ' (p-value=', ccc$p.value,')'))</code></pre>
 <pre><code>## [1] &quot;Spearman corr between PC1 and AB courses in controls is 0.265087871023232 (p-value=1.72512473276787e-05)&quot;</code></pre>
 <pre class="r"><code># corr between AB courses and PC in T2D patients
 ccdssub2 &lt;- subset (ccds, PatientGroup == &quot;3&quot;)
 ccc&lt;-cor.test (ccdssub2$PC1, ccdssub2$ANTIBIOTICS_TOTAL, method = &quot;spearman&quot;)
-print(paste0('Spearman corr between PC1 and AB courses T2D group is ',
+print(paste0('Size of T2D group: N = ',
+             dim(ccdssub2)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of T2D group: N = 456&quot;</code></pre>
+<pre class="r"><code>print(paste0('Spearman corr between PC1 and AB courses T2D group is ',
              ccc$estimate, ' (p-value=', ccc$p.value,')'))</code></pre>
 <pre><code>## [1] &quot;Spearman corr between PC1 and AB courses T2D group is 0.158001297661567 (p-value=0.000709151882900177)&quot;</code></pre>
 <p>Perform Wilcoxon test for principal components between patient and control groups on ABX and not.</p>
@@ -1723,7 +1729,15 @@ s8a &lt;- subset (ccds, ANTIBIOTICS_TOTAL &gt; 0 &amp; PatientGroup == &quot;8&q
 s3na &lt;- subset (ccds, ANTIBIOTICS_TOTAL == 0 &amp; PatientGroup == &quot;3&quot;)
 s3a &lt;- subset (ccds, ANTIBIOTICS_TOTAL &gt; 0 &amp; PatientGroup == &quot;3&quot;)
 
-print (paste (&quot;PC1 in T2D no-abx vs T2D abx Wilcoxon p-value=&quot;, wilcox.test (s3na$PC1, s3a$PC1)$p.value))</code></pre>
+print(paste0('Size of CTRL no-abx subgroup: N = ', dim(s8na)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of CTRL no-abx subgroup: N = 148&quot;</code></pre>
+<pre class="r"><code>print(paste0('Size of CTRL abx subgroup: N = ', dim(s8a)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of CTRL abx subgroup: N = 108&quot;</code></pre>
+<pre class="r"><code>print(paste0('Size of T2D no-abx subgroup: N = ', dim(s3na)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of T2D no-abx subgroup: N = 274&quot;</code></pre>
+<pre class="r"><code>print(paste0('Size of T2D abx subgroup: N = ', dim(s3a)[1]))</code></pre>
+<pre><code>## [1] &quot;Size of T2D abx subgroup: N = 182&quot;</code></pre>
+<pre class="r"><code>print (paste (&quot;PC1 in T2D no-abx vs T2D abx Wilcoxon p-value=&quot;, wilcox.test (s3na$PC1, s3a$PC1)$p.value))</code></pre>
 <pre><code>## [1] &quot;PC1 in T2D no-abx vs T2D abx Wilcoxon p-value= 0.000126116209498228&quot;</code></pre>
 <pre class="r"><code>print (paste (&quot;PC1 in CTRL no-abx vs CTRL abx Wilcoxon p-value=&quot;, wilcox.test (s8na$PC1, s8a$PC1)$p.value))</code></pre>
 <pre><code>## [1] &quot;PC1 in CTRL no-abx vs CTRL abx Wilcoxon p-value= 0.000138652362988215&quot;</code></pre>

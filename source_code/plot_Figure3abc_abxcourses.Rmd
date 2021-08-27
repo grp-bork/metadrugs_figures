@@ -129,11 +129,16 @@ Testing AB associations
 # corr between AB courses and PC in controls
 ccdssub1 <- subset (ccds, PatientGroup == "8")
 ccc <- cor.test (ccdssub1$PC1, ccdssub1$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Size of control group: N = ',
+             dim(ccdssub1)[1]))
+
 print(paste0('Spearman corr between PC1 and AB courses in controls is ',
              ccc$estimate, ' (p-value=', ccc$p.value,')'))
 # corr between AB courses and PC in T2D patients
 ccdssub2 <- subset (ccds, PatientGroup == "3")
 ccc<-cor.test (ccdssub2$PC1, ccdssub2$ANTIBIOTICS_TOTAL, method = "spearman")
+print(paste0('Size of T2D group: N = ',
+             dim(ccdssub2)[1]))
 print(paste0('Spearman corr between PC1 and AB courses T2D group is ',
              ccc$estimate, ' (p-value=', ccc$p.value,')'))
 ```
@@ -144,6 +149,11 @@ s8na <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & PatientGroup == "8")
 s8a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "8")
 s3na <- subset (ccds, ANTIBIOTICS_TOTAL == 0 & PatientGroup == "3")
 s3a <- subset (ccds, ANTIBIOTICS_TOTAL > 0 & PatientGroup == "3")
+
+print(paste0('Size of CTRL no-abx subgroup: N = ', dim(s8na)[1]))
+print(paste0('Size of CTRL abx subgroup: N = ', dim(s8a)[1]))
+print(paste0('Size of T2D no-abx subgroup: N = ', dim(s3na)[1]))
+print(paste0('Size of T2D abx subgroup: N = ', dim(s3a)[1]))
 
 print (paste ("PC1 in T2D no-abx vs T2D abx Wilcoxon p-value=", wilcox.test (s3na$PC1, s3a$PC1)$p.value))
 print (paste ("PC1 in CTRL no-abx vs CTRL abx Wilcoxon p-value=", wilcox.test (s8na$PC1, s8a$PC1)$p.value))
