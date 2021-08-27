@@ -46,10 +46,6 @@ Figure 2e: Drug combination associations with host and microbiome - example of m
 
 - *plot_Figure2e_example_mediation_analysis.ipynb/html*
 
-- *plot_Figure_snv.Rmd/html*
-
-Extended Data Figure 4: SNV analysis results for oral and gut strains in patients taking PPI
-
 Python script to perform mediation analysis for the three drug combinations in Figure 2e.
 
 - *plot_Figure3abc_abxcourses.ipynb/html*
@@ -63,6 +59,10 @@ Figure 3d: Heatmap of drug dosage-associated features
 - *plot_Figure3ef_enterotypes.ipynb/html*
 
 Figure 3ef: Dosage-associated enterotype features
+
+- *plot_Figure_snv.Rmd/html*
+
+Extended Data Figure 4: SNV analysis results for oral and gut strains in patients taking PPI
 
 ######################################################
 # To run the notebooks, the following files are required to be located in the folder *input_data* located in the subdirectory *source_code*:
